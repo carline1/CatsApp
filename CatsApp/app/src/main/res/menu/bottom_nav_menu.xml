@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/catsImagesFragment"
+        android:title="@string/cats_images_fragment_title"
+        android:icon="@drawable/ic_pawprint"/>
+
+    <item
+        android:id="@+id/favoritesCatsFragment"
+        android:title="@string/favorites_cats_fragment_title"
+        android:icon="@drawable/ic_favorite" />
+
+    <item
+        android:id="@+id/loadedCatsFragment"
+        android:title="@string/loaded_cats_fragment_title"
+        android:icon="@drawable/ic_cloud_download" />
+</menu>

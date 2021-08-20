@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Cats App</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cats_images_fragment_title">Cats</string>
+    <string name="favorites_cats_fragment_title">Favorite</string>
+    <string name="loaded_cats_fragment_title">Loaded</string>
+</resources>
