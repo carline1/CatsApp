@@ -1,8 +1,10 @@
-package com.example.catsapp.api.models
+package com.example.catsapp.api.models.res
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
+@kotlinx.parcelize.Parcelize
 data class BreedResponse(
     val adaptability: Int,
     @SerializedName("affection_level")
@@ -51,7 +53,6 @@ data class BreedResponse(
     val suppressedTail: Int,
     val temperament: String,
     val vocalisation: Int,
-    val weightResponse: WeightResponse,
     @SerializedName("wikipedia_url")
     val wikipediaUrl: String
-)
+) : Parcelable

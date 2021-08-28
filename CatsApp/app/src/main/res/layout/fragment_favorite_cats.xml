@@ -5,10 +5,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.FavoritesCatsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favoriteListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="fragment2" />
+        android:layout_marginBottom="@dimen/doubleActionBarSize"/>
 
 </FrameLayout>

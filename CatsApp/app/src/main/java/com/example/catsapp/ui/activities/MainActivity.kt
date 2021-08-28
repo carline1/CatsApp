@@ -1,15 +1,12 @@
-package com.example.catsapp
+package com.example.catsapp.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import com.example.catsapp.api.services.ImagesService
+import com.example.catsapp.R
 import com.example.catsapp.databinding.ActivityMainBinding
-import com.example.catsapp.di.CatsApp
-import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,5 +18,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         val bottomNavigationView = binding.bottomNavigationView
         NavigationUI.setupWithNavController(bottomNavigationView, navController)
+
+        setSupportActionBar(binding.toolbar)
     }
 }

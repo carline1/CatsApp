@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -38,6 +39,8 @@ android {
     buildFeatures {
         dataBinding true
     }
+
+    apply plugin: "androidx.navigation.safeargs.kotlin"
 }
 
 dependencies {
@@ -68,6 +71,7 @@ dependencies {
     // RxJava
     implementation 'io.reactivex.rxjava3:rxjava:3.0.4'
     implementation 'io.reactivex.rxjava3:rxkotlin:3.0.0'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 
     // Dagger
     implementation 'com.google.dagger:dagger:2.38.1'

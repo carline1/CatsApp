@@ -1,8 +1,43 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <string name="app_name">Cats App</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cats_images_fragment_title">Cats</string>
     <string name="favorites_cats_fragment_title">Favorite</string>
     <string name="loaded_cats_fragment_title">Loaded</string>
+    <string name="wikipedia">Wikipedia</string>
+    <string name="card_cat_info_not_found">Info about the cat not found :(</string>
+    <string name="voted_message">You voted for the cat!</string>
+    <string name="love_vote">Love it</string>
+    <string name="nope_vote">Nope it</string>
+    <string name="filter_title">Cat Image Filter</string>
+    <string name="filter_title_menu">Filter</string>
+    <string name="order_spinner_title">Order</string>
+    <string name="type_spinner_title">Type</string>
+    <string name="category_spinner_title">Category</string>
+    <string name="breed_spinner_title">Breed</string>
+    <string name="apply_filter_button">Apply Filter</string>
+    <string name="vocalisation_title_card_cat">Vocalisation</string>
+    <string name="stranger_friendly_title_card_cat">Stranger Friendly</string>
+    <string name="social_needs_title_card_cat">Social Needs</string>
+    <string name="shedding_level_title_card_cat">Shedding Level</string>
+    <string name="intelligence_title_card_cat">Intelligence</string>
+    <string name="health_issues_title_card_cat">Health Issues</string>
+    <string name="grooming_title_card_cat">Grooming</string>
+    <string name="energy_level_title_card_cat">Energy Level</string>
+    <string name="dog_friendly_title_card_cat">Dog Friendly</string>
+    <string name="child_friendly_title_card_cat">Child Friendly</string>
+    <string name="adaptability_title_card_cat">Adaptability</string>
+    <string name="affection_level_title_card_cat">Affection Level</string>
+
+    <string-array name="orderNames">
+        <item>Asc</item>
+        <item>Desc</item>
+    </string-array>
+
+    <string-array name="typeNames">
+        <item>All</item>
+        <item>Static</item>
+        <item>Animated</item>
+    </string-array>
+
 </resources>

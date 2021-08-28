@@ -1,7 +1,7 @@
 package com.example.catsapp.di
 
 import com.example.catsapp.api.interceptors.ApiKeyRequestInterceptor
-import com.example.catsapp.api.services.ImagesService
+import com.example.catsapp.api.services.CatService
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -37,6 +37,6 @@ class RemoteModule {
 
     @Provides
     @Singleton
-    fun provideImageService(retrofit: Retrofit): ImagesService = retrofit.create(ImagesService::class.java)
+    fun provideCatService(retrofit: Retrofit): CatService = retrofit.create(CatService::class.java)
 
 }

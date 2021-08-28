@@ -15,6 +15,19 @@
         <entry key="..\:/AndroidApps/CatsApp2/app/src/main/res/layout/image_view_holder.xml" value="0.25416666666666665" />
         <entry key="..\:/AndroidApps/CatsApp2/app/src/main/res/menu/bottom_nav_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/AndroidApps/CatsApp3/app/src/main/res/layout/image_view_holder.xml" value="0.13020833333333334" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/drawable/ic_arrow_back.xml" value="0.24814814814814815" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/drawable/ic_favorite.xml" value="0.14635416666666667" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/fragment_card_cat.xml" value="0.264" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/fragment_cats_images.xml" value="0.264" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/fragment_favorite_cats.xml" value="0.25416666666666665" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/fragment_favorites_cats.xml" value="0.25416666666666665" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/fragment_filter.xml" value="0.22807017543859648" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/fragment_loaded_cats.xml" value="0.13020833333333334" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/image_card.xml" value="0.21397379912663755" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/image_view_holder.xml" value="0.4" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/layout/image_view_holder_test.xml" value="0.25416666666666665" />
+        <entry key="..\:/Desktop/GitHub/CatsApp/CatsApp/app/src/main/res/menu/toolbar_cat_image_menu.xml" value="0.25416666666666665" />
       </map>
     </option>
   </component>
