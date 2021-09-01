@@ -1,6 +1,6 @@
 package com.example.catsapp.api.models.res
 
-data class VotePOSTResponse(
+data class BodyResponse(
     val message: String,
-    val id: Int
+    val id: String?
 )

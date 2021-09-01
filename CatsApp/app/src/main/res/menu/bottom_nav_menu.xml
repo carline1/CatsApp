@@ -7,12 +7,12 @@
         android:icon="@drawable/ic_pawprint"/>
 
     <item
-        android:id="@+id/favoritesCatsFragment"
-        android:title="@string/favorites_cats_fragment_title"
-        android:icon="@drawable/ic_favorite" />
+        android:id="@+id/favouritesCatsFragment"
+        android:title="@string/favourites_cats_fragment_title"
+        android:icon="@drawable/ic_favourite" />
 
     <item
         android:id="@+id/loadedCatsFragment"
         android:title="@string/loaded_cats_fragment_title"
-        android:icon="@drawable/ic_cloud_download" />
+        android:icon="@drawable/ic_cloud_upload" />
 </menu>

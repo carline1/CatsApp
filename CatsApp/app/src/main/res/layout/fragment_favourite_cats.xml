@@ -6,9 +6,9 @@
     tools:context=".ui.fragments.FavoritesCatsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/favoriteListRecyclerView"
+        android:id="@+id/favouriteListRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/doubleActionBarSize"/>
+        android:layout_marginTop="?attr/actionBarSize"/>
 
 </FrameLayout>

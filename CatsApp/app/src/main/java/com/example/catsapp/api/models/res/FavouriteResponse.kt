@@ -1,7 +1,7 @@
 package com.example.catsapp.api.models.res
 
 
-data class FavoriteResponse(
+data class FavouriteResponse(
     val created_at: String,
     val id: Int,
     val image: CatImageResponse,

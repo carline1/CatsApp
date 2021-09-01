@@ -1,9 +1,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <string name="app_name">Cats App</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="cats_images_fragment_title">Cats</string>
-    <string name="favorites_cats_fragment_title">Favorite</string>
-    <string name="loaded_cats_fragment_title">Loaded</string>
+    <string name="favourites_cats_fragment_title">Favourite</string>
+    <string name="loaded_cats_fragment_title">Upload</string>
     <string name="wikipedia">Wikipedia</string>
     <string name="card_cat_info_not_found">Info about the cat not found :(</string>
     <string name="voted_message">You voted for the cat!</string>
@@ -28,6 +27,14 @@
     <string name="child_friendly_title_card_cat">Child Friendly</string>
     <string name="adaptability_title_card_cat">Adaptability</string>
     <string name="affection_level_title_card_cat">Affection Level</string>
+    <string name="delete_loaded_image">Delete</string>
+    <string name="analysis_vh_parents">Parents: %1$s</string>
+    <string name="image_analysis_title">Image Analysis</string>
+    <string name="image_analysis_vendor">Vendor: %1$s</string>
+    <string name="image_analysis_id">Image ID: %1$s</string>
+    <string name="image_analysis_created_at">Created at: %1$s</string>
+    <string name="image_analysis_labels">Labels</string>
+    <string name="colon">%1$s:</string>
 
     <string-array name="orderNames">
         <item>Asc</item>
@@ -38,6 +45,11 @@
         <item>All</item>
         <item>Static</item>
         <item>Animated</item>
+    </string-array>
+
+    <string-array name="chooseImagePicker">
+        <item>Open gallery</item>
+        <item>Open camera</item>
     </string-array>
 
 </resources>

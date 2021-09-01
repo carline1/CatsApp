@@ -12,9 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.catsapp.R
-import com.example.catsapp.ui.paging.CatViewModel
-import com.example.catsapp.ui.paging.CatsFragmentViewModelFactory
-import com.example.catsapp.ui.paging.CatImagePagingAdapter
+import com.example.catsapp.ui.viewmodels.CatViewModel
+import com.example.catsapp.ui.viewmodels.CatsFragmentViewModelFactory
+import com.example.catsapp.ui.adapters.CatImagePagingAdapter
 import com.example.catsapp.api.services.CatService
 import com.example.catsapp.di.appComponent
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -26,6 +26,10 @@ class CatsImagesFragment : Fragment(R.layout.fragment_cats_images) {
 
     private val compositeDisposable = CompositeDisposable()
 
+    private val viewModel by activityViewModels<CatViewModel> {
+        CatsFragmentViewModelFactory(requireActivity().appComponent.getCatService())
+    }
+
     // Не работает почему-то :( (inject вызвал в onAttach)
     @Inject
     lateinit var catService: CatService
@@ -35,11 +39,7 @@ class CatsImagesFragment : Fragment(R.layout.fragment_cats_images) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        val viewModel by activityViewModels<CatViewModel> {
-            CatsFragmentViewModelFactory(requireActivity().appComponent.getCatService())
-        }
-
-        val pagingAdapter = CatImagePagingAdapter(requireContext(), viewModel)
+        val pagingAdapter = CatImagePagingAdapter(viewModel)
         val recyclerView = view.findViewById<RecyclerView>(R.id.imageListRecyclerView)
         recyclerView.adapter = pagingAdapter
         recyclerView.layoutManager = GridLayoutManager(view.context, 2)

@@ -13,7 +13,7 @@ import com.example.catsapp.R
 import com.example.catsapp.api.models.res.BreedFilterResponse
 import com.example.catsapp.api.models.res.CategoryFilterResponse
 import com.example.catsapp.databinding.FragmentFilterBinding
-import com.example.catsapp.ui.paging.CatViewModel
+import com.example.catsapp.ui.viewmodels.CatViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -39,22 +39,25 @@ class FilterFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        @Suppress("UNCHECKED_CAST")
-        compositeDisposable.add(viewModel.getBreedsAndCategories()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                val noneBreedFilterResponse = BreedFilterResponse("", "None")
-                val noneCategoryFilterResponse = CategoryFilterResponse(-1, "None")
-                val breedList = listOf(noneBreedFilterResponse) + (it[CatViewModel.BREED_LIST_KEY] as List<BreedFilterResponse>)
-                val categoryList = listOf(noneCategoryFilterResponse) + (it[CatViewModel.CATEGORY_LIST_KEY] as List<CategoryFilterResponse>)
-                setupSpinners(view, breedList, categoryList)
-                binding.filterProgressBar.visibility = View.INVISIBLE
-                binding.filterMenu.visibility = View.VISIBLE
-            }, {
-                Log.d("RETROFIT", "Exception during breedAndCategory request -> ${it.localizedMessage}")
-            })
-        )
+        if (viewModel.breedList.isNotEmpty() && viewModel.categoryList.isNotEmpty()) {
+            setupSpinners(view, viewModel.breedList, viewModel.categoryList)
+        } else {
+            @Suppress("UNCHECKED_CAST")
+            compositeDisposable.add(viewModel.getBreedsAndCategories()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    val noneBreedFilterResponse = BreedFilterResponse("", "None")
+                    val noneCategoryFilterResponse = CategoryFilterResponse(-1, "None")
+                    viewModel.breedList = listOf(noneBreedFilterResponse) + (it[CatViewModel.BREED_LIST_KEY] as List<BreedFilterResponse>)
+                    viewModel.categoryList = listOf(noneCategoryFilterResponse) + (it[CatViewModel.CATEGORY_LIST_KEY] as List<CategoryFilterResponse>)
+
+                    setupSpinners(view, viewModel.breedList, viewModel.categoryList)
+                }, {
+                    Log.d("RETROFIT", "Exception during breedAndCategory request -> ${it.localizedMessage}")
+                })
+            )
+        }
 
         binding.applyFilterBtn.setOnClickListener {
             val requestParams = mutableMapOf(
@@ -80,7 +83,7 @@ class FilterFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupSpinners(view: View, breedList: List<BreedFilterResponse>, categoryFilterList: List<CategoryFilterResponse>) {
+    private fun setupSpinners(view: View, breedList: List<BreedFilterResponse>, categoryList: List<CategoryFilterResponse>) {
         // Setup spinners
         val adapterOrderSpinner: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(
             view.context,
@@ -109,7 +112,7 @@ class FilterFragment : BottomSheetDialogFragment() {
         val adapterCategoryFilterSpinner: ArrayAdapter<CategoryFilterResponse> = ArrayAdapter<CategoryFilterResponse>(
             view.context,
             android.R.layout.simple_spinner_item,
-            categoryFilterList
+            categoryList
         )
         adapterCategoryFilterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = adapterCategoryFilterSpinner
@@ -122,6 +125,9 @@ class FilterFragment : BottomSheetDialogFragment() {
             binding.spinnerBreed.setSelection(it.getInt(BREED_POSITION_KEY))
             binding.spinnerCategory.setSelection(it.getInt(CATEGORY_POSITION_KEY))
         }
+
+        binding.filterProgressBar.visibility = View.INVISIBLE
+        binding.filterMenu.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

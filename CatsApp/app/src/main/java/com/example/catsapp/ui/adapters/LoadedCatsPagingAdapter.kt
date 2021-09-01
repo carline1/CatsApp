@@ -1,12 +1,11 @@
-package com.example.catsapp.ui.paging
+package com.example.catsapp.ui.adapters
 
-import android.content.Context
-import android.os.Build.VERSION.SDK_INT
+import android.os.Build
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.animation.AlphaAnimation
 import android.widget.ImageView
+import androidx.navigation.findNavController
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,34 +15,25 @@ import coil.decode.ImageDecoderDecoder
 import coil.load
 import com.example.catsapp.R
 import com.example.catsapp.api.models.res.CatImageResponse
-import android.view.animation.AlphaAnimation
-import android.widget.ImageButton
-import android.widget.Toast
-import androidx.navigation.findNavController
-import com.example.catsapp.ui.fragments.CardFragmentSelectionEnum
-import com.example.catsapp.ui.fragments.CatsImagesFragmentDirections
+import com.example.catsapp.ui.fragments.LoadedCatsFragmentDirections
+import com.example.catsapp.ui.viewmodels.CatViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 
-
-class CatImagePagingAdapter(context: Context, private val viewModel: CatViewModel) :
-    PagingDataAdapter<CatImageResponse, CatImagePagingAdapter.ImageViewHolder>(DiffCallback) {
-
-    private val inflater: LayoutInflater = LayoutInflater.from(context)
-
-    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        holder.bind(getItem(position))
-    }
+class LoadedCatsPagingAdapter(private val viewModel: CatViewModel)
+    : PagingDataAdapter<CatImageResponse, LoadedCatsPagingAdapter.ImageViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        return ImageViewHolder(inflater.inflate(R.layout.image_view_holder, parent, false), viewModel)
+        return ImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.image_view_holder, parent, false), viewModel)
+    }
+
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        return holder.bind(getItem(position))
     }
 
     class ImageViewHolder(itemView: View, private val viewModel: CatViewModel) : RecyclerView.ViewHolder(itemView) {
-
         private val imageView = itemView.findViewById<ImageView>(R.id.imageView)
-        private val favoriteBtn = itemView.findViewById<ImageButton>(R.id.favoriteBtn)
         private val compositeDisposable = CompositeDisposable()
 
         fun bind(item: CatImageResponse?) {
@@ -51,7 +41,7 @@ class CatImagePagingAdapter(context: Context, private val viewModel: CatViewMode
                 val imageLoader =
                     ImageLoader.Builder(context)
                         .componentRegistry {
-                            if (SDK_INT >= 28) {
+                            if (Build.VERSION.SDK_INT >= 28) {
                                 add(ImageDecoderDecoder(context))
                             } else {
                                 add(GifDecoder())
@@ -73,29 +63,29 @@ class CatImagePagingAdapter(context: Context, private val viewModel: CatViewMode
 
                 Log.d("TEST", "${item?.breeds.toString()}, ${item?.id}, ${item?.url}")
 
-                val breed = if (item?.breeds?.size != 0) item?.breeds?.get(0) else null
-                val action = CatsImagesFragmentDirections.actionCatsImagesFragmentToCardCatFragment(
-                    item?.id,
+                val action = LoadedCatsFragmentDirections.actionLoadedCatsFragmentToCatAnalysisCardFragment(
                     item?.url,
-                    breed,
-                    CardFragmentSelectionEnum.CatImage
+                    item?.id
                 )
                 it.findNavController().navigate(action)
             }
 
-            favoriteBtn.visibility = View.VISIBLE
-
-            favoriteBtn.setOnClickListener {
-                compositeDisposable.add(viewModel.setFavorite(item?.id!!)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        Log.d("RETROFIT", "${it.message}, id: ${it.id}")
-                        Toast.makeText(itemView.context, "The cat was successfully added to favorites", Toast.LENGTH_SHORT).show()
-                    }, {
-                        Toast.makeText(itemView.context, "The cat is already in the favorites", Toast.LENGTH_SHORT).show()
-                    })
-                )
+            itemView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                menu?.add(0, v?.id!!, 0, "Delete")
+                    ?.setOnMenuItemClickListener {
+                        compositeDisposable.add(viewModel.deleteUploadImage(item?.id!!)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe({
+                                itemView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
+//                                Toast.makeText(v.context, "Cat successfully deleted!", Toast.LENGTH_SHORT).show()
+                            }, {
+                                itemView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
+                                Log.d("RETROFIT", "Exception during deleteUploadedImage request -> ${it.localizedMessage}")
+//                                Toast.makeText(v.context, "Error! Try again", Toast.LENGTH_SHORT).show()
+                            }))
+                        true
+                    }
             }
         }
     }
@@ -110,4 +100,3 @@ class CatImagePagingAdapter(context: Context, private val viewModel: CatViewMode
         }
     }
 }
-

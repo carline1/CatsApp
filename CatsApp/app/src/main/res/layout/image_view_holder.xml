@@ -15,19 +15,19 @@
         tools:src="@tools:sample/avatars"/>
 
     <ImageButton
-        android:id="@+id/favoriteBtn"
+        android:id="@+id/favouriteBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_margin="7dp"
         android:backgroundTint="@android:color/transparent"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_favorite"
+        app:srcCompat="@drawable/ic_favourite"
         tools:ignore="ContentDescription"
         tools:visibility="visible"/>
 
     <ImageButton
-        android:id="@+id/deleteFromFavoriteBtn"
+        android:id="@+id/deleteFromFavouriteBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"

@@ -1,6 +1,5 @@
 package com.example.catsapp.ui.fragments
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +11,6 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.load
-import com.example.catsapp.R
 import com.example.catsapp.databinding.FragmentCardCatBinding
 import android.net.Uri
 import android.content.Intent
@@ -22,20 +20,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.example.catsapp.api.models.res.BreedResponse
-import com.example.catsapp.api.services.CatService
-import com.example.catsapp.di.appComponent
-import com.example.catsapp.ui.paging.CatViewModel
+import com.example.catsapp.ui.viewmodels.CatViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
 
 
-class CardCatFragment : Fragment(R.layout.fragment_card_cat) {
-
-    // Тоже не работает :(
-    @Inject
-    lateinit var catService: CatService
+class CardCatFragment : Fragment() {
 
     private lateinit var binding: FragmentCardCatBinding
     private val args by navArgs<CardCatFragmentArgs>()
@@ -74,7 +65,7 @@ class CardCatFragment : Fragment(R.layout.fragment_card_cat) {
             }
         }
 
-        binding.catdImageBackBtn.setOnClickListener {
+        binding.cardImageBackBtn.setOnClickListener {
             view.findNavController().popBackStack()
         }
 
@@ -106,7 +97,7 @@ class CardCatFragment : Fragment(R.layout.fragment_card_cat) {
             if (args.breed != null) setupCardFragment(args.breed)
             binding.cardCatInfo.visibility = View.VISIBLE
         }
-        else if (args.fragmentSelection == CardFragmentSelectionEnum.FavoriteCats) {
+        else if (args.fragmentSelection == CardFragmentSelectionEnum.FavouriteCats) {
             compositeDisposable.add(viewModel.getImage(args.imageId!!)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -127,18 +118,18 @@ class CardCatFragment : Fragment(R.layout.fragment_card_cat) {
         binding.cardImageName.text = breed?.name
         binding.cardImageDescription.text = breed?.description
         binding.cardImageTemperament.text = breed?.temperament
-        binding.cardImageAffectionLevel.numStars = breed?.affectionLevel!!
-        binding.cardImageAdaptability.numStars = breed.adaptability
-        binding.cardImageChildFriendly.numStars = breed.childFriendly
-        binding.cardImageDogFriendly.numStars = breed.dogFriendly
-        binding.cardImageEnergyLevel.numStars = breed.energyLevel
-        binding.cardImageGrooming.numStars = breed.grooming
-        binding.cardImageHealthIssues.numStars = breed.healthIssues
-        binding.cardImageIntelligence.numStars = breed.intelligence
-        binding.cardImageSheddingLevel.numStars = breed.sheddingLevel
-        binding.cardImageSocialNeeds.numStars = breed.socialNeeds
-        binding.cardImageStrangerFriendly.numStars = breed.strangerFriendly
-        binding.cardImageVocalisation.numStars = breed.vocalisation
+        binding.cardImageAffectionLevel.rating = breed?.affectionLevel!!.toFloat()
+        binding.cardImageAdaptability.rating = breed.adaptability.toFloat()
+        binding.cardImageChildFriendly.rating = breed.childFriendly.toFloat()
+        binding.cardImageDogFriendly.rating = breed.dogFriendly.toFloat()
+        binding.cardImageEnergyLevel.rating = breed.energyLevel.toFloat()
+        binding.cardImageGrooming.rating = breed.grooming.toFloat()
+        binding.cardImageHealthIssues.rating = breed.healthIssues.toFloat()
+        binding.cardImageIntelligence.rating = breed.intelligence.toFloat()
+        binding.cardImageSheddingLevel.rating = breed.sheddingLevel.toFloat()
+        binding.cardImageSocialNeeds.rating = breed.socialNeeds.toFloat()
+        binding.cardImageStrangerFriendly.rating = breed.strangerFriendly.toFloat()
+        binding.cardImageVocalisation.rating = breed.vocalisation.toFloat()
 
         binding.cardImageBreedInfo.visibility = View.VISIBLE
 
@@ -146,12 +137,6 @@ class CardCatFragment : Fragment(R.layout.fragment_card_cat) {
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(breed.wikipediaUrl))
             startActivity(browserIntent)
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        context.appComponent.inject(this)
     }
 
     override fun onResume() {

@@ -38,5 +38,4 @@ class RemoteModule {
     @Provides
     @Singleton
     fun provideCatService(retrofit: Retrofit): CatService = retrofit.create(CatService::class.java)
-
 }

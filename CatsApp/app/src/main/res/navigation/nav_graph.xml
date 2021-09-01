@@ -21,17 +21,27 @@
         android:id="@+id/loadedCatsFragment"
         android:name="com.example.catsapp.ui.fragments.LoadedCatsFragment"
         android:label="fragment_loaded_cats"
-        tools:layout="@layout/fragment_loaded_cats" />
+        tools:layout="@layout/fragment_loaded_cats" >
+        <action
+            android:id="@+id/action_loadedCatsFragment_to_imagePickerDialogFragment2"
+            app:destination="@id/imagePickerDialogFragment2" />
+        <action
+            android:id="@+id/action_loadedCatsFragment_self"
+            app:destination="@id/loadedCatsFragment" />
+        <action
+            android:id="@+id/action_loadedCatsFragment_to_catAnalysisCardFragment"
+            app:destination="@id/catAnalysisCardFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/favoritesCatsFragment"
-        android:name="com.example.catsapp.ui.fragments.FavoritesCatsFragment"
-        android:label="fragment_favorites_cats"
-        tools:layout="@layout/fragment_favorite_cats" >
+        android:id="@+id/favouritesCatsFragment"
+        android:name="com.example.catsapp.ui.fragments.FavouritesCatsFragment"
+        android:label="fragment_favourites_cats"
+        tools:layout="@layout/fragment_favourite_cats" >
         <action
-            android:id="@+id/action_favoritesCatsFragment_self"
-            app:destination="@id/favoritesCatsFragment" />
+            android:id="@+id/action_favouritesCatsFragment_self"
+            app:destination="@id/favouritesCatsFragment" />
         <action
-            android:id="@+id/action_favoritesCatsFragment_to_cardCatFragment"
+            android:id="@+id/action_favouritesCatsFragment_to_cardCatFragment"
             app:destination="@id/cardCatFragment" />
     </fragment>
     <fragment
@@ -65,4 +75,21 @@
             android:id="@+id/action_filterFragment_to_catsImagesFragment"
             app:destination="@id/catsImagesFragment" />
     </dialog>
+    <fragment
+        android:id="@+id/imagePickerDialogFragment2"
+        android:name="com.example.catsapp.ui.fragments.ImagePickerDialogFragment"
+        android:label="ImagePickerDialogFragment" />
+    <fragment
+        android:id="@+id/catAnalysisCardFragment"
+        android:name="com.example.catsapp.ui.fragments.CatAnalysisCardFragment"
+        android:label="CatAnalysisCardFragment" >
+        <argument
+            android:name="imageUrl"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 </navigation>
