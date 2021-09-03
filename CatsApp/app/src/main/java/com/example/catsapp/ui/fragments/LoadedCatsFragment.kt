@@ -1,6 +1,8 @@
 package com.example.catsapp.ui.fragments
 
 import android.Manifest
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
@@ -67,29 +69,31 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
         super.onDestroy()
     }
 
-    private val camera = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        compositeDisposable.add(viewModel.sendImage(bitmap)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
-            }, {
-                Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
-            })
-        )
+    private val camera = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+        if (bitmap != null)
+            compositeDisposable.add(viewModel.sendImage(bitmap)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
+                }, {
+                    Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
+                })
+            )
     }
 
-    private val gallery = registerForActivityResult(ActivityResultContracts.GetContent()) { callback ->
-        compositeDisposable.add(
-            viewModel.sendImage(MediaStore.Images.Media.getBitmap(requireContext().contentResolver, callback))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
-            }, {
-                Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
-            })
-        )
+    private val gallery = registerForActivityResult(ActivityResultContracts.GetContent()) { callback: Uri? ->
+        if (callback != null)
+            compositeDisposable.add(
+                viewModel.sendImage(MediaStore.Images.Media.getBitmap(requireContext().contentResolver, callback))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
+                    }, {
+                        Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
+                    })
+            )
     }
 
     private val cameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
