@@ -35,6 +35,7 @@
     <string name="image_analysis_created_at">Created at: %1$s</string>
     <string name="image_analysis_labels">Labels</string>
     <string name="colon">%1$s:</string>
+    <string name="uploading">Uploading…</string>
 
     <string-array name="orderNames">
         <item>Asc</item>

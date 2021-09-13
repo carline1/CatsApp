@@ -41,4 +41,3 @@ class CatImagePagingSource(
         return page.prevKey?.plus(1) ?: page.nextKey?.minus(1)
     }
 }
-

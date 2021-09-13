@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/favouritesCatsFragment"
+    android:id="@+id/favourites_cats_tab">
+
+    <fragment
+        android:id="@+id/favouritesCatsFragment"
+        android:name="com.example.catsapp.ui.fragments.FavouriteCatsFragment"
+        android:label="fragment_favourites_cats"
+        tools:layout="@layout/fragment_favourite_cats" >
+        <action
+            android:id="@+id/action_favouritesCatsFragment_to_cardCatFragment"
+            app:destination="@id/cardCatFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cardCatFragment"
+        android:name="com.example.catsapp.ui.fragments.CardCatFragment"
+        android:label="fragment_card_cat"
+        tools:layout="@layout/fragment_card_cat" >
+        <argument
+            android:name="imageId"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="imageUrl"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+</navigation>

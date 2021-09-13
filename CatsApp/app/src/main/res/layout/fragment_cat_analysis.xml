@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     app:layout_collapseMode="parallax"
-                    tools:src="@tools:sample/backgrounds/scenic"
+                    tools:src="@drawable/image_placeholder"
                     tools:ignore="ContentDescription" />
 
                 <androidx.appcompat.widget.Toolbar
@@ -57,6 +57,20 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <LinearLayout
+            android:id="@+id/cat_analysis_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="com.example.catsapp.ui.fragments.AdaptiveHeightScrollingViewBehavior"
+            tools:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -75,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="22sp"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColor"
                     android:textStyle="bold"
                     android:layout_marginBottom="15dp"
                     android:text="@string/image_analysis_title"/>
@@ -85,7 +99,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColor"
                     android:text="@string/image_analysis_id"/>
 
                 <TextView
@@ -93,7 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColor"
                     android:text="@string/image_analysis_created_at"/>
 
                 <TextView
@@ -101,7 +115,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
-                    android:textColor="@color/black"
+                    android:textColor="?android:attr/textColor"
                     android:layout_marginBottom="15dp"
                     android:text="@string/image_analysis_vendor"/>
 
@@ -120,12 +134,13 @@
                         android:text="@string/image_analysis_labels"
                         android:textStyle="bold"
                         android:layout_marginBottom="10dp"
-                        android:textColor="@color/black"/>
+                        android:textColor="?android:attr/textColor"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/catAnalysisListRecyclerView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:overScrollMode="never"/>
 
                 </LinearLayout>
 

@@ -15,7 +15,7 @@
             android:id="@+id/analysis_vh_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColor"
             android:textSize="18sp"
             android:layout_marginEnd="10dp"
             android:text="@string/colon"
@@ -25,7 +25,7 @@
             android:id="@+id/analysis_vh_confidence"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="?android:attr/textColor"
             android:textSize="18sp"
             tools:text="94.1232"/>
     </LinearLayout>
@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:text="@string/analysis_vh_parents"
+        android:textColor="?android:attr/textColorSecondary"
         android:textStyle="italic"/>
 
 </LinearLayout>

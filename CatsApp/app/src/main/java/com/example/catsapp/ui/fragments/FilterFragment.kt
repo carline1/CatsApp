@@ -43,7 +43,7 @@ class FilterFragment : BottomSheetDialogFragment() {
             setupSpinners(view, viewModel.breedList, viewModel.categoryList)
         } else {
             @Suppress("UNCHECKED_CAST")
-            compositeDisposable.add(viewModel.getBreedsAndCategories()
+            compositeDisposable.add(viewModel.getBreedsAndCategoriesFromServer()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -70,6 +70,7 @@ class FilterFragment : BottomSheetDialogFragment() {
                 requestParams["category_ids"] = (binding.spinnerCategory.selectedItem as CategoryFilterResponse).id.toString()
 
             viewModel.requestParams = requestParams
+            viewModel.refreshCatImages()
             findNavController().navigate(R.id.action_filterFragment_to_catsImagesFragment)
         }
     }

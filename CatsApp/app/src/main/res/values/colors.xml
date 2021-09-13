@@ -10,4 +10,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#4CAF50</color>
     <color name="red">#F44336</color>
+    <color name="textColorSecondaryLight">#888</color>
+    <color name="textColorSecondaryDark">#8A000000</color>
 </resources>

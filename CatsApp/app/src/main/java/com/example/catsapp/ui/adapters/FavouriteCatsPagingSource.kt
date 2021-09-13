@@ -11,6 +11,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class FavouriteCatsPagingSource(
     private val catService: CatService
 ) : RxPagingSource<Int, FavouriteResponse>() {
+
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FavouriteResponse>> {
         val page = params.key ?: 0
         val limit = params.loadSize

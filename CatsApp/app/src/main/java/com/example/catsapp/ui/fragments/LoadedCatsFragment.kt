@@ -10,21 +10,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.catsapp.R
 import com.example.catsapp.databinding.FragmentLoadedCatsBinding
 import com.example.catsapp.ui.adapters.LoadedCatsPagingAdapter
 import com.example.catsapp.ui.viewmodels.CatViewModel
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.coroutines.launch
+import android.content.Intent
+import android.provider.Settings
+import android.widget.Toast
+import com.example.catsapp.ui.adapters.LoaderStateAdapter
 
 
 class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDialogListener {
@@ -45,18 +53,36 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val pagingAdapter = LoadedCatsPagingAdapter(viewModel)
+        val pagingAdapter = LoadedCatsPagingAdapter(requireContext(), viewModel)
         val recyclerView = view.findViewById<RecyclerView>(R.id.loadedListRecyclerView)
         recyclerView.adapter = pagingAdapter
-        recyclerView.layoutManager = GridLayoutManager(view.context, 2)
-        val query = mutableMapOf(
-            "order" to "asc",
-            "sub_id" to CatViewModel.SUB_ID
+
+        val layoutManager = GridLayoutManager(view.context, 2)
+        recyclerView.layoutManager = layoutManager
+        layoutManager.spanSizeLookup =  object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (position == pagingAdapter.itemCount  && pagingAdapter.itemCount > 0) {
+                    2
+                } else {
+                    1
+                }
+            }
+        }
+        recyclerView.adapter = pagingAdapter.withLoadStateHeaderAndFooter(
+            header = LoaderStateAdapter(),
+            footer = LoaderStateAdapter()
         )
 
-        compositeDisposable.add(viewModel.getLoadedImages(query).subscribe {
-            pagingAdapter.submitData(lifecycle, it)
-        })
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.loadedImages.observe(viewLifecycleOwner, {
+                pagingAdapter.submitData(lifecycle, it)
+            })
+        }
+
+        pagingAdapter.addLoadStateListener { state ->
+            binding.loadedCatsContainer.isVisible = state.refresh != LoadState.Loading
+            binding.loadedCatsProgressBar.isVisible = state.refresh == LoadState.Loading
+        }
 
         binding.addCardButton.setOnClickListener {
             val dialog = ImagePickerDialogFragment()
@@ -64,51 +90,81 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
         }
     }
 
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
-    }
-
     private val camera = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
         if (bitmap != null)
-            compositeDisposable.add(viewModel.sendImage(bitmap)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
-                }, {
-                    Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
-                })
-            )
+            uploadImage(bitmap)
     }
 
     private val gallery = registerForActivityResult(ActivityResultContracts.GetContent()) { callback: Uri? ->
-        if (callback != null)
-            compositeDisposable.add(
-                viewModel.sendImage(MediaStore.Images.Media.getBitmap(requireContext().contentResolver, callback))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({
-                        binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
-                    }, {
-                        Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
-                    })
-            )
+        if (callback != null) {
+            val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, callback)
+            uploadImage(bitmap)
+        }
+    }
+
+    private fun uploadImage(bitmap: Bitmap) {
+        binding.loadedCatsUploadingProgressBar.visibility = View.VISIBLE
+        binding.loadedCatsContainer.visibility = View.GONE
+
+        compositeDisposable.add(viewModel.sendImageToServer(bitmap)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doFinally {
+                binding.loadedCatsUploadingProgressBar.visibility = View.GONE
+                binding.loadedCatsContainer.visibility = View.VISIBLE
+            }
+            .subscribe({
+                Log.d("RETROFIT", "Successful upload image to server -> " +
+                        "${it.message}, id: ${it.id}")
+                viewModel.refreshLoadedImages()
+                binding.loadedListRecyclerView.findNavController().navigate(R.id.action_loadedCatsFragment_self)
+                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_LONG).show()
+            }, {
+                Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
+                Toast.makeText(context, "Error! Image not uploaded", Toast.LENGTH_LONG).show()
+            })
+        )
     }
 
     private val cameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) {
-            camera.launch()
-        } else {
-            Toast.makeText(context, "Permission denied!", Toast.LENGTH_SHORT).show()
+        when {
+            granted -> camera.launch()
+            !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                Snackbar
+                    .make(
+                        binding.loadedCatsContainer,
+                        "You need to access camera permission to upload image",
+                        Snackbar.LENGTH_LONG
+                    )
+                    .setAction("Settings") {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        val uri = Uri.fromParts("package", requireContext().packageName, null)
+                        intent.data = uri
+                        startActivity(intent)
+                    }
+                    .show()
+            }
         }
     }
 
     private val storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        if (granted) {
-            gallery.launch("image/*")
-        } else {
-            Toast.makeText(context, "Permission denied!", Toast.LENGTH_SHORT).show()
+        when {
+            granted -> gallery.launch("image/*")
+            !shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+                Snackbar
+                    .make(
+                        binding.loadedCatsContainer,
+                        "You need to access storage permission to upload image",
+                        Snackbar.LENGTH_LONG
+                    )
+                    .setAction("Settings") {
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        val uri = Uri.fromParts("package", requireContext().packageName, null)
+                        intent.data = uri
+                        startActivity(intent)
+                    }
+                    .show()
+            }
         }
     }
 
@@ -120,4 +176,8 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
         cameraPermission.launch(Manifest.permission.CAMERA)
     }
 
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
 }
