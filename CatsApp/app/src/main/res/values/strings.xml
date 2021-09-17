@@ -4,7 +4,7 @@
     <string name="favourites_cats_fragment_title">Favourite</string>
     <string name="loaded_cats_fragment_title">Upload</string>
     <string name="wikipedia">Wikipedia</string>
-    <string name="card_cat_info_not_found">Info about the cat not found :(</string>
+    <string name="cat_card_info_not_found">Info about the cat not found :(</string>
     <string name="voted_message">You voted for the cat!</string>
     <string name="love_vote">Love it</string>
     <string name="nope_vote">Nope it</string>
@@ -15,18 +15,18 @@
     <string name="category_spinner_title">Category</string>
     <string name="breed_spinner_title">Breed</string>
     <string name="apply_filter_button">Apply Filter</string>
-    <string name="vocalisation_title_card_cat">Vocalisation</string>
-    <string name="stranger_friendly_title_card_cat">Stranger Friendly</string>
-    <string name="social_needs_title_card_cat">Social Needs</string>
-    <string name="shedding_level_title_card_cat">Shedding Level</string>
-    <string name="intelligence_title_card_cat">Intelligence</string>
-    <string name="health_issues_title_card_cat">Health Issues</string>
-    <string name="grooming_title_card_cat">Grooming</string>
-    <string name="energy_level_title_card_cat">Energy Level</string>
-    <string name="dog_friendly_title_card_cat">Dog Friendly</string>
-    <string name="child_friendly_title_card_cat">Child Friendly</string>
-    <string name="adaptability_title_card_cat">Adaptability</string>
-    <string name="affection_level_title_card_cat">Affection Level</string>
+    <string name="vocalisation_title_cat_card">Vocalisation</string>
+    <string name="stranger_friendly_title_cat_card">Stranger Friendly</string>
+    <string name="social_needs_title_cat_card">Social Needs</string>
+    <string name="shedding_level_title_cat_card">Shedding Level</string>
+    <string name="intelligence_title_cat_card">Intelligence</string>
+    <string name="health_issues_title_cat_card">Health Issues</string>
+    <string name="grooming_title_cat_card">Grooming</string>
+    <string name="energy_level_title_cat_card">Energy Level</string>
+    <string name="dog_friendly_title_cat_card">Dog Friendly</string>
+    <string name="child_friendly_title_cat_card">Child Friendly</string>
+    <string name="adaptability_title_cat_card">Adaptability</string>
+    <string name="affection_level_title_cat_card">Affection Level</string>
     <string name="delete_loaded_image">Delete</string>
     <string name="analysis_vh_parents">Parents: %1$s</string>
     <string name="image_analysis_title">Image Analysis</string>
@@ -36,6 +36,9 @@
     <string name="image_analysis_labels">Labels</string>
     <string name="colon">%1$s:</string>
     <string name="uploading">Uploading…</string>
+    <string name="retry_btn">Retry</string>
+    <string name="loading_favorites">Loading favorites…</string>
+    <string name="reset_filters_button">Reset Filters</string>
 
     <string-array name="orderNames">
         <item>Asc</item>

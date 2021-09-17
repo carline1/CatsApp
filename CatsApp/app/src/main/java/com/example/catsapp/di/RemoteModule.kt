@@ -16,7 +16,6 @@ import javax.inject.Singleton
 class RemoteModule {
 
     @Provides
-    @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
@@ -25,7 +24,6 @@ class RemoteModule {
     }
 
     @Provides
-    @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit{
         return Retrofit.Builder()
             .baseUrl("https://api.thecatapi.com/v1/")

@@ -1,0 +1,40 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "018a1479ff255ce8a75fc03a9b9e7783",
+    "entities": [
+      {
+        "tableName": "favourites_ids_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`imageId` TEXT NOT NULL, `favouriteId` TEXT NOT NULL, PRIMARY KEY(`imageId`))",
+        "fields": [
+          {
+            "fieldPath": "imageId",
+            "columnName": "imageId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "favouriteId",
+            "columnName": "favouriteId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "imageId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '018a1479ff255ce8a75fc03a9b9e7783')"
+    ]
+  }
+}

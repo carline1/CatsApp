@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/cat_images_tab"
+        android:id="@+id/catImagesFragment"
         android:title="@string/cats_images_fragment_title"
         android:icon="@drawable/ic_pawprint"/>
 
     <item
-        android:id="@+id/favourites_cats_tab"
+        android:id="@+id/favouriteCatsFragment"
         android:title="@string/favourites_cats_fragment_title"
         android:icon="@drawable/ic_favourite" />
 
     <item
-        android:id="@+id/loaded_cats_tab"
+        android:id="@+id/loadedCatsFragment"
         android:title="@string/loaded_cats_fragment_title"
         android:icon="@drawable/ic_cloud_upload" />
 </menu>

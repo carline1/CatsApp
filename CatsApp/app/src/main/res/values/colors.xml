@@ -12,4 +12,5 @@
     <color name="red">#F44336</color>
     <color name="textColorSecondaryLight">#888</color>
     <color name="textColorSecondaryDark">#8A000000</color>
+    <color name="transparent_grey">#50000000</color>
 </resources>

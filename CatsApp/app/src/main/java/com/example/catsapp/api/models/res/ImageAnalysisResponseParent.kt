@@ -5,5 +5,5 @@ import com.google.gson.annotations.SerializedName
 
 data class ImageAnalysisResponseParent(
     @SerializedName("Name")
-    val name: String
+    val name: String?
 )

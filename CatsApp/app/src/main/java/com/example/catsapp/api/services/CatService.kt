@@ -3,6 +3,7 @@ package com.example.catsapp.api.services
 import com.example.catsapp.api.models.req.FavouriteRequest
 import com.example.catsapp.api.models.req.VoteRequest
 import com.example.catsapp.api.models.res.*
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -16,10 +17,18 @@ interface CatService {
     fun sendVoteRequest(@Body voteRequest: VoteRequest): Single<BodyResponse>
 
     @GET("breeds")
-    fun getBreeds(): Single<List<BreedFilterResponse>>
+    fun getBreeds(
+        @Query("sub_id") sub_id: String,
+        @Query("limit") limit: String,
+        @Query("page") page: String
+    ): Single<List<BreedFilterResponse>>
 
     @GET("categories")
-    fun getCategories(): Single<List<CategoryFilterResponse>>
+    fun getCategories(
+        @Query("sub_id") sub_id: String,
+        @Query("limit") limit: String,
+        @Query("page") page: String
+    ): Single<List<CategoryFilterResponse>>
 
     @POST("favourites")
     fun sendFavouriteRequest(@Body favouriteRequest: FavouriteRequest): Single<BodyResponse>
