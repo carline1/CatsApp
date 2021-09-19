@@ -14,13 +14,9 @@ interface CatsDao {
     fun insertFavourite(favouriteIdsEntity: FavouriteIdsEntity): Completable
 
     @Insert(entity = FavouriteIdsEntity::class, onConflict = OnConflictStrategy.REPLACE)
-    @JvmSuppressWildcards
     fun insertAll(favouriteIdsEntityList: List<FavouriteIdsEntity>): Completable
 
-    @Query("DELETE FROM ${FavouriteIdsEntity.TABLE_NAME} WHERE imageId like :imageId")
-    fun deleteFavourite(imageId: String): Completable
-
-//    @Query("DELETE FROM ${FavouriteIdsEntity.TABLE_NAME} WHERE favouriteId like :favouriteId")
-//    fun deleteFavouriteUsingFavouriteId(favouriteId: String): Completable
+    @Query("DELETE FROM ${FavouriteIdsEntity.TABLE_NAME} WHERE favouriteId like :favouriteId")
+    fun deleteFavourite(favouriteId: String): Completable
 
 }

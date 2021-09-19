@@ -29,6 +29,8 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import android.provider.Settings
 import android.widget.Toast
+import androidx.lifecycle.map
+import androidx.paging.filter
 import com.example.catsapp.ui.common.LoaderStateAdapter
 import com.example.catsapp.ui.fragments.imagePicker.ImagePickerDialogFragment
 
@@ -81,7 +83,10 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            loadedCatsViewModel.loadedImages.observe(viewLifecycleOwner, {
+            loadedCatsViewModel.loadedImages.map { pagingData ->
+                pagingData.filter { it.id !in loadedCatsViewModel.getDeletedFavourites() }
+            }
+                .observe(viewLifecycleOwner, {
                 pagingAdapter.submitData(lifecycle, it)
             })
         }

@@ -1,11 +1,9 @@
 package com.example.catsapp.ui.fragments.favouriteCats
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.*
+import com.example.catsapp.api.models.req.FavouriteRequest
 import com.example.catsapp.api.models.res.BodyResponse
 import com.example.catsapp.api.models.res.FavouriteResponse
 import com.example.catsapp.api.services.CatService
@@ -13,11 +11,9 @@ import com.example.catsapp.db.RoomCatsRepository
 import com.example.catsapp.db.dao.FavouriteIdsEntity
 import com.example.catsapp.di.appComponent
 import com.example.catsapp.ui.common.CatsAppKeys
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class FavouriteCatsViewModel(
@@ -37,6 +33,9 @@ class FavouriteCatsViewModel(
     private var _favourites = setupFavouritePager()
     var favourites: LiveData<PagingData<FavouriteResponse>> = _favourites
         private set
+
+    private val deletedFavourites = mutableSetOf<Int>()
+    fun getDeletedFavourites() = deletedFavourites
 
     // Key - favouriteId
     // Value - imageId
@@ -77,8 +76,33 @@ class FavouriteCatsViewModel(
             .last(listOf())
     }
 
-    fun deleteFavouriteFromServer(favourite_id: String): Single<BodyResponse> {
+    fun sendFavouriteToServer(image_id: String): Observable<BodyResponse> {
+        return catService.sendFavouriteRequest(
+            FavouriteRequest(
+                image_id = image_id,
+                sub_id = CatsAppKeys.SUB_ID
+            )
+        ).toObservable().flatMap {
+            val favouriteIdsEntity =
+                FavouriteIdsEntity(
+                    imageId = image_id,
+                    favouriteId = it.id!!
+                )
+            catDatabaseList?.add(favouriteIdsEntity)
+            roomCatsRepository.insertFavourite(favouriteIdsEntity)
+                .andThen(Observable.just(it))
+        }
+    }
+
+    fun deleteFavouriteFromServer(favourite_id: String): Observable<BodyResponse> {
         return catService.deleteFavourite(favourite_id)
+            .toObservable().flatMap {
+                catDatabaseList?.remove(catDatabaseList?.find { favouriteIdsEntity ->
+                    favouriteIdsEntity.favouriteId == favourite_id
+                })
+                roomCatsRepository.deleteFavourite(favourite_id)
+                    .andThen(Observable.just(it))
+            }
     }
 
     // Livedata
@@ -86,7 +110,12 @@ class FavouriteCatsViewModel(
         val pagingData = favourites.value ?: return
         pagingData
             .filter { favouriteResponse?.id != it.id }
-            .let { _favourites.value = it }
+            .let {
+                _favourites.value = it
+                favouriteResponse?.id?.let { id ->
+                    deletedFavourites.add(id)
+                }
+            }
     }
 
     // Database
@@ -104,21 +133,11 @@ class FavouriteCatsViewModel(
         }
     }
 
-    fun insertFavouriteEntityToDatabase(favouriteIdsEntity: FavouriteIdsEntity): Completable {
-        catDatabaseList?.add(favouriteIdsEntity)
-        return roomCatsRepository.insertFavourite(favouriteIdsEntity)
-    }
-
     fun setupFavouriteIdsEntityList(favouriteIdsEntityList: List<FavouriteIdsEntity>) {
         catDatabaseList = favouriteIdsEntityList as MutableList<FavouriteIdsEntity>
     }
 
     fun loadAllFavouriteEntitiesFromDatabase() = roomCatsRepository.loadAllFavouriteEntities()
-
-    fun deleteFavouriteEntityFromDatabase(imageId: String): Completable {
-        catDatabaseList?.remove(catDatabaseList?.find { it.imageId == imageId })
-        return roomCatsRepository.deleteFavourite(imageId)
-    }
 
     fun getCatDatabaseList() = catDatabaseList
 

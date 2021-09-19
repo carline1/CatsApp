@@ -133,12 +133,12 @@ class FilterFragment : BottomSheetDialogFragment() {
 
 
         // Restore filter fragment instance state
-        filterViewModel.bundleFilterFragment.observe(viewLifecycleOwner) {
-            binding?.spinnerOrder?.setSelection(it.getInt(ORDER_POSITION_KEY))
-            binding?.spinnerType?.setSelection(it.getInt(TYPE_POSITION_KEY))
-            binding?.spinnerBreed?.setSelection(it.getInt(BREED_POSITION_KEY))
-            binding?.spinnerCategory?.setSelection(it.getInt(CATEGORY_POSITION_KEY))
-        }
+        val bundleFilterFragment = filterViewModel.bundleFilterFragment
+        binding?.spinnerOrder?.setSelection(bundleFilterFragment.getInt(ORDER_POSITION_KEY))
+        binding?.spinnerType?.setSelection(bundleFilterFragment.getInt(TYPE_POSITION_KEY))
+        binding?.spinnerBreed?.setSelection(bundleFilterFragment.getInt(BREED_POSITION_KEY))
+        binding?.spinnerCategory?.setSelection(bundleFilterFragment.getInt(CATEGORY_POSITION_KEY))
+
 
         binding?.filterProgressBar?.visibility = View.INVISIBLE
         binding?.filterMenu?.visibility = View.VISIBLE

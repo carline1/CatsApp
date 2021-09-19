@@ -27,8 +27,8 @@ class FavouriteCatsPagingAdapter(
     context: Context,
     private val favouritesViewModel: FavouriteCatsViewModel
 ) : PagingDataAdapter<FavouriteResponse, FavouriteCatsPagingAdapter.FavouriteCatsViewHolder>(
-        DiffCallback
-    ) {
+    DiffCallback
+) {
 
     private val imageLoader =
         ImageLoader.Builder(context)
@@ -46,8 +46,10 @@ class FavouriteCatsPagingAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavouriteCatsViewHolder {
-        return FavouriteCatsViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.image_view_holder, parent, false), favouritesViewModel)
+        return FavouriteCatsViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.image_view_holder, parent, false), favouritesViewModel
+        )
     }
 
     inner class FavouriteCatsViewHolder(
@@ -56,7 +58,8 @@ class FavouriteCatsPagingAdapter(
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val imageView = itemView.findViewById<ImageView>(R.id.imageView)
-        private val deleteFromFavouriteBtn = itemView.findViewById<ImageButton>(R.id.deleteFromFavouriteBtn)
+        private val deleteFromFavouriteBtn =
+            itemView.findViewById<ImageButton>(R.id.deleteFromFavouriteBtn)
 
         fun bind(item: FavouriteResponse?, position: Int) {
             val imageRequest = ImageRequest.Builder(imageView.context)
@@ -70,30 +73,39 @@ class FavouriteCatsPagingAdapter(
             itemView.setOnClickListener {
                 it.startAnimation(AlphaAnimation(10f, 0.8f))
 
-                val action = FavouriteCatsFragmentDirections.actionFavouriteCatsFragmentToCardCatFragment(
-                    item?.image_id,
-                    item?.image?.url
-                )
+                val action =
+                    FavouriteCatsFragmentDirections.actionFavouriteCatsFragmentToCardCatFragment(
+                        item?.image_id,
+                        item?.image?.url
+                    )
                 it.findNavController().navigate(action)
             }
 
             deleteFromFavouriteBtn.visibility = View.VISIBLE
 
             deleteFromFavouriteBtn.setOnClickListener {
-                favouritesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServer(item?.id.toString())
-                    .toObservable()
+                favouritesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServer(
+                    item?.id.toString()
+                )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext {
-                        item?.image_id?.let { favouritesViewModel.deleteFavouriteEntityFromDatabase(imageId = it) }
-                    }
                     .subscribe({
-                        Log.d("RETROFIT", "Successful image deleting from favourites-> ${it.message}, id: ${it.id}")
+                        Log.d(
+                            "RETROFIT",
+                            "Successful image deleting from favourites-> ${it.message}, id: ${it.id}"
+                        )
                         favouritesViewModel.deleteFavouriteFromLiveData(item)
                         notifyItemRangeChanged(position, itemCount - position)
                     }, {
-                        Log.d("RETROFIT", "Exception during deleteFavourite request -> ${it.localizedMessage}")
-                        Toast.makeText(imageView.context, "Image deleting error", Toast.LENGTH_SHORT).show()
+                        Log.d(
+                            "RETROFIT",
+                            "Exception during deleteFavourite request -> ${it.localizedMessage}"
+                        )
+                        Toast.makeText(
+                            imageView.context,
+                            "Image deleting error",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     })
                 )
             }
@@ -101,11 +113,17 @@ class FavouriteCatsPagingAdapter(
     }
 
     companion object DiffCallback : DiffUtil.ItemCallback<FavouriteResponse>() {
-        override fun areItemsTheSame(oldItem: FavouriteResponse, newItem: FavouriteResponse): Boolean {
+        override fun areItemsTheSame(
+            oldItem: FavouriteResponse,
+            newItem: FavouriteResponse
+        ): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: FavouriteResponse, newItem: FavouriteResponse): Boolean {
+        override fun areContentsTheSame(
+            oldItem: FavouriteResponse,
+            newItem: FavouriteResponse
+        ): Boolean {
             return oldItem == newItem
         }
     }

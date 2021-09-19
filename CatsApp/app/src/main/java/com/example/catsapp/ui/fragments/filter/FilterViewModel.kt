@@ -2,12 +2,10 @@ package com.example.catsapp.ui.fragments.filter
 
 import android.app.Application
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.catsapp.api.models.res.BreedFilterResponse
 import com.example.catsapp.api.models.res.CategoryFilterResponse
-import com.example.catsapp.api.models.res.FavouriteResponse
 import com.example.catsapp.api.services.CatService
 import com.example.catsapp.di.appComponent
 import com.example.catsapp.ui.common.CatsAppKeys
@@ -28,8 +26,8 @@ class FilterViewModel(
 
     val compositeDisposable = CompositeDisposable()
 
-    private val _bundleFilterFragment = MutableLiveData<Bundle>()
-    val bundleFilterFragment: LiveData<Bundle> = _bundleFilterFragment
+    var bundleFilterFragment = bundleOf()
+        private set
 
     var breedList = listOf<BreedFilterResponse>()
         private set
@@ -38,7 +36,7 @@ class FilterViewModel(
 
     // Setup filter
     fun setupBundleFilter(bundle: Bundle) {
-        _bundleFilterFragment.value = bundle
+        bundleFilterFragment = bundle
     }
 
     fun setupBreedList(list: List<BreedFilterResponse>) {

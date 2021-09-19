@@ -1,7 +1,6 @@
 package com.example.catsapp.ui.fragments.favouriteCats
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
@@ -9,13 +8,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.catsapp.R
 import com.example.catsapp.databinding.FragmentFavouriteCatsBinding
 import com.example.catsapp.ui.common.LoaderStateAdapter
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FavouriteCatsFragment : Fragment() {
@@ -65,7 +65,10 @@ class FavouriteCatsFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            favouritesViewModel.favourites.observe(viewLifecycleOwner, {
+            favouritesViewModel.favourites.map { pagingData ->
+                pagingData.filter { it.id !in favouritesViewModel.getDeletedFavourites() }
+            }
+                .observe(viewLifecycleOwner, {
                 pagingAdapter.submitData(lifecycle, it)
             })
         }

@@ -21,7 +21,6 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.navigation.findNavController
 import coil.request.ImageRequest
-import com.example.catsapp.db.dao.FavouriteIdsEntity
 import com.example.catsapp.ui.fragments.favouriteCats.FavouriteCatsViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -92,18 +91,9 @@ class CatImagesPagingAdapter(
                 if (favouritesViewModel.getCatDatabaseList()?.find { it.imageId == item?.id } == null) {
                     progressBar.visibility = View.VISIBLE
 
-                    catImagesViewModel.compositeDisposable.add(catImagesViewModel.sendFavouriteToServer(item?.id!!)
-                        .toObservable()
+                    catImagesViewModel.compositeDisposable.add(favouritesViewModel.sendFavouriteToServer(item?.id!!)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext {
-                            favouritesViewModel.insertFavouriteEntityToDatabase(
-                                FavouriteIdsEntity(
-                                    imageId = item.id,
-                                    favouriteId = it.id!!
-                                )
-                            )
-                        }
                         .doFinally {
                             progressBar.visibility = View.GONE
                         }
@@ -124,12 +114,8 @@ class CatImagesPagingAdapter(
                     catImagesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServer(
                         favouritesViewModel.getCatDatabaseList()?.find { it.imageId == item?.id }!!.favouriteId
                     )
-                        .toObservable()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .doOnNext {
-                            favouritesViewModel.deleteFavouriteEntityFromDatabase(item?.id!!)
-                        }
                         .doFinally {
                             progressBar.visibility = View.GONE
                         }

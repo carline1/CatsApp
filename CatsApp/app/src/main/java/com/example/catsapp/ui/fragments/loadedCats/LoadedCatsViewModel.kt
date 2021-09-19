@@ -37,6 +37,9 @@ class LoadedCatsViewModel(
     var loadedImages: LiveData<PagingData<CatImageResponse>> = _loadedImages
         private set
 
+    private val deletedFavourites = mutableSetOf<String>()
+    fun getDeletedFavourites() = deletedFavourites
+
     private fun setupLoadedImagesPager() =
         Pager(PagingConfig(pageSize = CatsAppKeys.PAGE_SIZE, initialLoadSize = CatsAppKeys.INITIAL_LOAD_SIZE)) {
             val query = mutableMapOf(
@@ -56,7 +59,12 @@ class LoadedCatsViewModel(
         val pagingData = loadedImages.value ?: return
         pagingData
             .filter { catImageResponse?.id != it.id }
-            .let { _loadedImages.value = it }
+            .let {
+                _loadedImages.value = it
+                catImageResponse?.id?.let { id ->
+                    deletedFavourites.add(id)
+                }
+            }
     }
 
     // Server

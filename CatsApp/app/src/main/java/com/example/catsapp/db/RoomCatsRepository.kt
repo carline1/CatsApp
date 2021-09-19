@@ -10,6 +10,6 @@ class RoomCatsRepository(private val catsDao: CatsDao) {
     fun loadAllFavouriteEntities(): Single<List<FavouriteIdsEntity>> = catsDao.loadAllFavouriteEntities()
     fun insertAll(favouriteIdsEntityList: List<FavouriteIdsEntity>) = catsDao.insertAll(favouriteIdsEntityList)
     fun insertFavourite(favouriteIdsEntity: FavouriteIdsEntity): Completable = catsDao.insertFavourite(favouriteIdsEntity)
-    fun deleteFavourite(imageId: String): Completable = catsDao.deleteFavourite(imageId)
+    fun deleteFavourite(favouriteId: String): Completable = catsDao.deleteFavourite(favouriteId)
 
 }

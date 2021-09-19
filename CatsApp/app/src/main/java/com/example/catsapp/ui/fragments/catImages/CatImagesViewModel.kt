@@ -6,13 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.example.catsapp.api.models.req.FavouriteRequest
-import com.example.catsapp.api.models.res.BodyResponse
 import com.example.catsapp.api.models.res.CatImageResponse
 import com.example.catsapp.api.services.CatService
+import com.example.catsapp.db.RoomCatsRepository
 import com.example.catsapp.di.appComponent
 import com.example.catsapp.ui.common.CatsAppKeys
-import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -25,6 +23,8 @@ class CatImagesViewModel(
     }
     @Inject
     lateinit var catService: CatService
+    @Inject
+    lateinit var roomCatsRepository: RoomCatsRepository
 
     val compositeDisposable = CompositeDisposable()
 
@@ -46,15 +46,6 @@ class CatImagesViewModel(
     fun refreshCatImages() {
         _catImages = setupCatImagesPager()
         catImages = _catImages
-    }
-
-    fun sendFavouriteToServer(image_id: String): Single<BodyResponse> {
-        return catService.sendFavouriteRequest(
-            FavouriteRequest(
-                image_id = image_id,
-                sub_id = CatsAppKeys.SUB_ID
-            )
-        )
     }
 
     override fun onCleared() {
