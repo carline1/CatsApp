@@ -21,8 +21,10 @@ class CatImagesViewModel(
     init {
         application.appComponent.inject(this)
     }
+
     @Inject
     lateinit var catService: CatService
+
     @Inject
     lateinit var roomCatsRepository: RoomCatsRepository
 
@@ -39,7 +41,12 @@ class CatImagesViewModel(
     }
 
     private fun setupCatImagesPager() =
-        Pager(PagingConfig(pageSize = CatsAppKeys.PAGE_SIZE, initialLoadSize = CatsAppKeys.INITIAL_LOAD_SIZE)) {
+        Pager(
+            PagingConfig(
+                pageSize = CatsAppKeys.PAGE_SIZE,
+                initialLoadSize = CatsAppKeys.INITIAL_LOAD_SIZE
+            )
+        ) {
             CatImagesPagingSource(catService, requestParams)
         }.liveData.cachedIn(viewModelScope) as MutableLiveData<PagingData<CatImageResponse>>
 

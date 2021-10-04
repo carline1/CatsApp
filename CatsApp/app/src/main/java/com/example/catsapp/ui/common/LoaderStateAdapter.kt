@@ -13,7 +13,7 @@ import com.example.catsapp.databinding.LoadStateItemBinding
 
 class LoaderStateAdapter(
     private val retry: () -> Unit
-): LoadStateAdapter<LoaderStateAdapter.LoadStateViewHolder>() {
+) : LoadStateAdapter<LoaderStateAdapter.LoadStateViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

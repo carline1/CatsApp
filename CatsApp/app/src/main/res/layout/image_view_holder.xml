@@ -2,17 +2,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/image_view_holder"
     android:layout_width="match_parent"
     android:layout_height="180dp"
-    android:layout_margin="7dp"
-    android:id="@+id/image_view_holder">
+    android:layout_margin="7dp">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        tools:src="@tools:sample/avatars"/>
+        tools:src="@tools:sample/avatars" />
 
     <ImageButton
         android:id="@+id/favouriteBtn"
@@ -23,7 +23,7 @@
         android:visibility="gone"
         app:srcCompat="@drawable/ic_favourite"
         tools:ignore="ContentDescription"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <ImageButton
         android:id="@+id/deleteFromFavouriteBtn"
@@ -34,7 +34,7 @@
         android:visibility="gone"
         app:srcCompat="@drawable/ic_close"
         tools:ignore="ContentDescription"
-        tools:visibility="visible"/>
+        tools:visibility="visible" />
 
     <FrameLayout
         android:id="@+id/image_view_progress_bar"

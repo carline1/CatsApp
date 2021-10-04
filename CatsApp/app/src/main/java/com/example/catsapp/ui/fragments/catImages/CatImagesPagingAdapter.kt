@@ -47,8 +47,12 @@ class CatImagesPagingAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        return ImageViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.image_view_holder, parent, false), catImagesViewModel, favouritesViewModel)
+        return ImageViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.image_view_holder, parent, false),
+            catImagesViewModel,
+            favouritesViewModel
+        )
     }
 
     inner class ImageViewHolder(
@@ -71,6 +75,7 @@ class CatImagesPagingAdapter(
                 .data(item?.url)
                 .crossfade(10)
                 .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder)
                 .target(imageView)
                 .build()
             imageLoader.enqueue(imageRequest)
@@ -88,31 +93,45 @@ class CatImagesPagingAdapter(
             favouriteBtn.visibility = View.VISIBLE
 
             favouriteBtn.setOnClickListener {
-                if (favouritesViewModel.getCatDatabaseList()?.find { it.imageId == item?.id } == null) {
+                if (favouritesViewModel.getCatDatabaseList()
+                        ?.find { it.imageId == item?.id } == null
+                ) {
                     progressBar.visibility = View.VISIBLE
 
-                    catImagesViewModel.compositeDisposable.add(favouritesViewModel.sendFavouriteToServer(item?.id!!)
+                    catImagesViewModel.compositeDisposable.add(favouritesViewModel.sendFavouriteToServerAndSaveToDB(
+                        item?.id!!
+                    )
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally {
                             progressBar.visibility = View.GONE
                         }
                         .subscribe({
-                            Log.d("RETROFIT", "Successful image sending -> ${it.message}, id: ${it.id}")
+                            Log.d(
+                                "RETROFIT",
+                                "Successful image sending -> ${it.message}, id: ${it.id}"
+                            )
 
                             favouriteBtn.setImageResource(R.drawable.ic_favourite_active)
-                            Toast.makeText(itemView.context, "The cat was successfully added to favourites", Toast.LENGTH_SHORT).show()
                             favouritesViewModel.refreshFavourites()
                         }, {
-                            Log.d("RETROFIT", "Exception during sendFavourite request -> ${it.localizedMessage}")
-                            Toast.makeText(itemView.context, "Error while adding a cat to favorites", Toast.LENGTH_SHORT).show()
+                            Log.d(
+                                "RETROFIT",
+                                "Exception during sendFavourite request -> ${it.localizedMessage}"
+                            )
+                            Toast.makeText(
+                                itemView.context,
+                                "Error while adding a cat to favorites",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         })
                     )
                 } else {
                     progressBar.visibility = View.VISIBLE
 
-                    catImagesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServer(
-                        favouritesViewModel.getCatDatabaseList()?.find { it.imageId == item?.id }!!.favouriteId
+                    catImagesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServerAndFromDB(
+                        favouritesViewModel.getCatDatabaseList()
+                            ?.find { it.imageId == item?.id }!!.favouriteId
                     )
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -120,14 +139,23 @@ class CatImagesPagingAdapter(
                             progressBar.visibility = View.GONE
                         }
                         .subscribe({
-                            Log.d("RETROFIT", "Successful image deleting from server -> ${it.message}, id: ${it.id}")
+                            Log.d(
+                                "RETROFIT",
+                                "Successful image deleting from server -> ${it.message}, id: ${it.id}"
+                            )
 
                             favouriteBtn.setImageResource(R.drawable.ic_favourite)
-                            Toast.makeText(itemView.context, "The cat was successfully deleted from favourites", Toast.LENGTH_SHORT).show()
                             favouritesViewModel.refreshFavourites()
                         }, {
-                            Log.d("RETROFIT", "Exception during deleteFavourite request -> ${it.localizedMessage}")
-                            Toast.makeText(itemView.context, "Error while deleting a cat from favorites", Toast.LENGTH_SHORT).show()
+                            Log.d(
+                                "RETROFIT",
+                                "Exception during deleteFavourite request -> ${it.localizedMessage}"
+                            )
+                            Toast.makeText(
+                                itemView.context,
+                                "Error while deleting a cat from favorites",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         })
                     )
                 }
@@ -135,12 +163,18 @@ class CatImagesPagingAdapter(
         }
     }
 
-    companion object DiffCallback: DiffUtil.ItemCallback<CatImageResponse>() {
-        override fun areItemsTheSame(oldItem: CatImageResponse, newItem: CatImageResponse): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<CatImageResponse>() {
+        override fun areItemsTheSame(
+            oldItem: CatImageResponse,
+            newItem: CatImageResponse
+        ): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: CatImageResponse, newItem: CatImageResponse): Boolean {
+        override fun areContentsTheSame(
+            oldItem: CatImageResponse,
+            newItem: CatImageResponse
+        ): Boolean {
             return oldItem == newItem
         }
     }

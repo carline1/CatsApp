@@ -12,18 +12,16 @@ import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import android.net.Uri
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import coil.request.ImageRequest
-import com.example.catsapp.R
+import com.example.catsapp.api.models.Resource
 import com.example.catsapp.api.models.res.BreedResponse
 import com.example.catsapp.databinding.FragmentCatCardBinding
+import com.example.catsapp.ui.common.CatsAppKeys
 import com.example.catsapp.ui.common.FullScreenStateChanger
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class CatCardFragment : Fragment() {
@@ -31,14 +29,14 @@ class CatCardFragment : Fragment() {
     private var binding: FragmentCatCardBinding? = null
     private val args by navArgs<CatCardFragmentArgs>()
 
-    private val catCardViewModel by activityViewModels<CatCardViewModel>()
+    private val catCardViewModel by viewModels<CatCardViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding  = FragmentCatCardBinding.inflate(inflater, container, false)
+        val binding = FragmentCatCardBinding.inflate(inflater, container, false)
         this.binding = binding
         return binding.root
     }
@@ -57,33 +55,15 @@ class CatCardFragment : Fragment() {
                 }
                 .build()
 
-        val imageRequest = binding?.let {
-            ImageRequest.Builder(view.context)
-                .data(args.imageUrl)
-                .crossfade(10)
-                .placeholder(R.drawable.image_placeholder)
-                .target(it.cardImage)
-                .build()
-        }
-        if (imageRequest != null) {
-            imageLoader.enqueue(imageRequest)
-        }
-
         binding?.cardImageBackBtn?.setOnClickListener {
             view.findNavController().popBackStack()
         }
 
-        fun voteBtn(view: View, value: Int){
-            catCardViewModel.compositeDisposable.add(catCardViewModel.sendVoteToServer(args.imageId, value)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    Log.d("RETROFIT", "Successful vote sending -> ${it.message}, id: ${it.id}")
-                    Toast.makeText(view.context, "${it.message}FUL request", Toast.LENGTH_SHORT).show()
-                }, {
-                    Log.d("RETROFIT", "Exception during vote request -> ${it.localizedMessage}")
-                })
-            )
+        fun voteBtn(view: View, value: Int) {
+            catCardViewModel.sendVoteToServerStatus.observe(viewLifecycleOwner) {
+                Toast.makeText(view.context, "${it.message}FUL request", Toast.LENGTH_SHORT).show()
+            }
+            catCardViewModel.sendVoteToServer(value)
 
             binding?.voteButtonsLayout?.visibility = View.INVISIBLE
             binding?.alreadyVotedTextview?.visibility = View.VISIBLE
@@ -97,22 +77,67 @@ class CatCardFragment : Fragment() {
             voteBtn(it, 1)
         }
 
-        catCardViewModel.compositeDisposable.add(catCardViewModel.getImageFromServer(args.imageId!!)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                Log.d("RETROFIT", "Successful getting cat image info from server -> ${it.url}, id: ${it.id}")
+        binding?.catCardRetryButton?.setOnClickListener {
+            catCardViewModel.getImageFromServer()
+        }
 
-                if (it.breeds != null)
-                    if (it.breeds.isNotEmpty())
-                        setupCardFragment(it.breeds[0])
+        catCardViewModel.getImageFromServerStatus.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Loading -> {
+                    fragmentState(CatsAppKeys.LOADING)
+                }
+                is Resource.Success -> {
+                    val imageRequest = binding?.catCardImage?.let { imageView ->
+                        ImageRequest.Builder(view.context)
+                            .data(args.imageUrl)
+                            .crossfade(10)
+                            .target(
+                                onSuccess = { result ->
+                                    fragmentState(CatsAppKeys.SUCCESS)
+                                    imageView.setImageDrawable(result)
+                                    if (it.data.breeds != null)
+                                        if (it.data.breeds.isNotEmpty())
+                                            setupCardFragment(it.data.breeds[0])
+                                },
+                                onError = {
+                                    fragmentState(CatsAppKeys.ERROR)
+                                }
+                            )
+                            .build()
+                    }
+                    if (imageRequest != null) {
+                        imageLoader.enqueue(imageRequest)
+                    }
+                }
+                is Resource.Error -> {
+                    fragmentState(CatsAppKeys.ERROR)
+                }
+            }
+        }
+        catCardViewModel.getImageFromServer()
+    }
 
+    private fun fragmentState(stateId: Int) {
+        when (stateId) {
+            CatsAppKeys.LOADING -> {
+                binding?.catCardImage?.visibility = View.GONE
+                binding?.catCardInfo?.visibility = View.GONE
+                binding?.catCardProgressBar?.visibility = View.VISIBLE
+                binding?.catCardRetryButton?.visibility = View.GONE
+            }
+            CatsAppKeys.SUCCESS -> {
+                binding?.catCardImage?.visibility = View.VISIBLE
                 binding?.catCardInfo?.visibility = View.VISIBLE
                 binding?.catCardProgressBar?.visibility = View.GONE
-            }, {
-                Log.d("RETROFIT", "Exception during image request -> ${it.localizedMessage}")
-            })
-        )
+                binding?.catCardRetryButton?.visibility = View.GONE
+            }
+            CatsAppKeys.ERROR -> {
+                binding?.catCardImage?.visibility = View.GONE
+                binding?.catCardInfo?.visibility = View.GONE
+                binding?.catCardProgressBar?.visibility = View.GONE
+                binding?.catCardRetryButton?.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun setupCardFragment(breed: BreedResponse?) {

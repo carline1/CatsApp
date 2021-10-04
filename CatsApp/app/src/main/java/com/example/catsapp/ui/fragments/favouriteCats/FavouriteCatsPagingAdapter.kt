@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
@@ -60,12 +61,14 @@ class FavouriteCatsPagingAdapter(
         private val imageView = itemView.findViewById<ImageView>(R.id.imageView)
         private val deleteFromFavouriteBtn =
             itemView.findViewById<ImageButton>(R.id.deleteFromFavouriteBtn)
+        private val progressBar = itemView.findViewById<FrameLayout>(R.id.image_view_progress_bar)
 
         fun bind(item: FavouriteResponse?, position: Int) {
             val imageRequest = ImageRequest.Builder(imageView.context)
                 .data(item?.image?.url)
                 .crossfade(10)
                 .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder)
                 .target(imageView)
                 .build()
             imageLoader.enqueue(imageRequest)
@@ -84,11 +87,16 @@ class FavouriteCatsPagingAdapter(
             deleteFromFavouriteBtn.visibility = View.VISIBLE
 
             deleteFromFavouriteBtn.setOnClickListener {
-                favouritesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServer(
+                progressBar.visibility = View.VISIBLE
+
+                favouritesViewModel.compositeDisposable.add(favouritesViewModel.deleteFavouriteFromServerAndFromDB(
                     item?.id.toString()
                 )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doFinally {
+                        progressBar.visibility = View.GONE
+                    }
                     .subscribe({
                         Log.d(
                             "RETROFIT",

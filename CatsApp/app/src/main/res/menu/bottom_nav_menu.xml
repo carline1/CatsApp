@@ -3,16 +3,16 @@
 
     <item
         android:id="@+id/catImagesFragment"
-        android:title="@string/cats_images_fragment_title"
-        android:icon="@drawable/ic_pawprint"/>
+        android:icon="@drawable/ic_pawprint"
+        android:title="@string/cats_images_fragment_title" />
 
     <item
         android:id="@+id/favouriteCatsFragment"
-        android:title="@string/favourites_cats_fragment_title"
-        android:icon="@drawable/ic_favourite" />
+        android:icon="@drawable/ic_favourite"
+        android:title="@string/favourites_cats_fragment_title" />
 
     <item
         android:id="@+id/loadedCatsFragment"
-        android:title="@string/loaded_cats_fragment_title"
-        android:icon="@drawable/ic_cloud_upload" />
+        android:icon="@drawable/ic_cloud_upload"
+        android:title="@string/loaded_cats_fragment_title" />
 </menu>

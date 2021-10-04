@@ -15,8 +15,8 @@ class ImagePickerDialogFragment : DialogFragment() {
         val activity = requireActivity()
         val builder = AlertDialog.Builder(activity)
             .setTitle("Choose image picker")
-            .setItems(R.array.chooseImagePicker) { dialog, which ->
-                when(which){
+            .setItems(R.array.chooseImagePicker) { _, which ->
+                when (which) {
                     0 -> listener.onDialogGalleryClick(this)
                     1 -> listener.onDialogCameraClick(this)
                 }

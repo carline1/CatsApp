@@ -3,7 +3,6 @@ package com.example.catsapp.ui.fragments.catImages
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -20,8 +19,6 @@ import com.example.catsapp.ui.common.FullScreenStateChanger
 import com.example.catsapp.ui.common.LoaderStateAdapter
 import com.example.catsapp.ui.common.CatsAppKeys
 import com.example.catsapp.ui.fragments.favouriteCats.FavouriteCatsViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.launch
 
 
@@ -49,13 +46,14 @@ class CatImagesFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        val pagingAdapter = CatImagesPagingAdapter(requireContext(), catImagesViewModel, favouritesViewModel)
+        val pagingAdapter =
+            CatImagesPagingAdapter(requireContext(), catImagesViewModel, favouritesViewModel)
         val recyclerView = view.findViewById<RecyclerView>(R.id.imageListRecyclerView)
         val layoutManager = GridLayoutManager(view.context, 2)
         recyclerView.layoutManager = layoutManager
-        layoutManager.spanSizeLookup =  object : GridLayoutManager.SpanSizeLookup() {
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (position == pagingAdapter.itemCount  && pagingAdapter.itemCount > 0) {
+                return if (position == pagingAdapter.itemCount && pagingAdapter.itemCount > 0) {
                     2
                 } else {
                     1
@@ -92,44 +90,23 @@ class CatImagesFragment : Fragment() {
     }
 
     private fun loadFavouritesFromServerToDatabase(pagingAdapter: CatImagesPagingAdapter) {
-        catImagesViewModel.compositeDisposable.add(
-            favouritesViewModel.insertAllFavouriteEntitiesToDatabase()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    Log.d("RETROFIT", "Successful insert favourites from server to database")
+        favouritesViewModel.insertAllFavouriteEntitiesToDBStatus.observe(viewLifecycleOwner) {
+            binding?.catImagesLoadingFavProgressBar?.visibility = View.GONE
+            binding?.catImagesLayout?.visibility = View.VISIBLE
+            FullScreenStateChanger.fullScreen(requireActivity(), false)
 
-                    binding?.catImagesLoadingFavProgressBar?.visibility = View.GONE
-                    binding?.catImagesLayout?.visibility = View.VISIBLE
-                    FullScreenStateChanger.fullScreen(requireActivity(), false)
-
-                    prefs?.edit()?.putBoolean(CatsAppKeys.FIRST_RUN_KEY, false)?.apply()
-                    paging(pagingAdapter)
-                }, {
-                    Log.d(
-                        "RETROFIT",
-                        "Exception during inserting favourites from server to database -> ${it.localizedMessage}"
-                    )
-                })
-        )
+            prefs?.edit()?.putBoolean(CatsAppKeys.FIRST_RUN_KEY, false)?.apply()
+            paging(pagingAdapter)
+        }
+        favouritesViewModel.insertAllFavouriteEntitiesToDB()
     }
 
     private fun loadAllFavouritesFromDatabase(pagingAdapter: CatImagesPagingAdapter) {
-        catImagesViewModel.compositeDisposable.add(
-            favouritesViewModel.loadAllFavouriteEntitiesFromDatabase()
-                .subscribeOn(Schedulers.io())
-                .subscribe({ list ->
-                    favouritesViewModel.setupFavouriteIdsEntityList(list)
-                    Log.d("RETROFIT", "Successful load favourites from database")
-
-                    paging(pagingAdapter)
-                } ,{
-                    Log.d(
-                        "RETROFIT",
-                        "Exception during loading favourites from database -> ${it.localizedMessage}"
-                    )
-                })
-        )
+        favouritesViewModel.loadAllFavouriteEntitiesFromDBStatus.observe(viewLifecycleOwner) {
+            favouritesViewModel.setupFavouriteIdsEntityList(it)
+            paging(pagingAdapter)
+        }
+        favouritesViewModel.loadAllFavouriteEntitiesFromDB()
     }
 
     private fun paging(pagingAdapter: CatImagesPagingAdapter) {
@@ -154,6 +131,9 @@ class CatImagesFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        prefs = context.getSharedPreferences(CatsAppKeys.PREFERENCE_FILE_KEY, AppCompatActivity.MODE_PRIVATE)
+        prefs = context.getSharedPreferences(
+            CatsAppKeys.PREFERENCE_FILE_KEY,
+            AppCompatActivity.MODE_PRIVATE
+        )
     }
 }

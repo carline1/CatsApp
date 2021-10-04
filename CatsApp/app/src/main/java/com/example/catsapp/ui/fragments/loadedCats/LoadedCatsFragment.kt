@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.core.view.isVisible
@@ -23,14 +22,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.catsapp.R
 import com.example.catsapp.databinding.FragmentLoadedCatsBinding
 import com.google.android.material.snackbar.Snackbar
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.launch
 import android.content.Intent
 import android.provider.Settings
 import android.widget.Toast
 import androidx.lifecycle.map
 import androidx.paging.filter
+import com.example.catsapp.api.models.Resource
 import com.example.catsapp.ui.common.LoaderStateAdapter
 import com.example.catsapp.ui.fragments.imagePicker.ImagePickerDialogFragment
 
@@ -59,9 +57,9 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
 
         val layoutManager = GridLayoutManager(view.context, 2)
         recyclerView.layoutManager = layoutManager
-        layoutManager.spanSizeLookup =  object : GridLayoutManager.SpanSizeLookup() {
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (position == pagingAdapter.itemCount  && pagingAdapter.itemCount > 0) {
+                return if (position == pagingAdapter.itemCount && pagingAdapter.itemCount > 0) {
                     2
                 } else {
                     1
@@ -87,8 +85,8 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
                 pagingData.filter { it.id !in loadedCatsViewModel.getDeletedFavourites() }
             }
                 .observe(viewLifecycleOwner, {
-                pagingAdapter.submitData(lifecycle, it)
-            })
+                    pagingAdapter.submitData(lifecycle, it)
+                })
         }
 
 
@@ -98,87 +96,94 @@ class LoadedCatsFragment : Fragment(), ImagePickerDialogFragment.ImagePickerDial
         }
     }
 
-    private val camera = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
-        if (bitmap != null)
-            uploadImage(bitmap)
-    }
-
-    private val gallery = registerForActivityResult(ActivityResultContracts.GetContent()) { callback: Uri? ->
-        if (callback != null) {
-            val bitmap = MediaStore.Images.Media.getBitmap(requireContext().contentResolver, callback)
-            uploadImage(bitmap)
+    private val camera =
+        registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+            if (bitmap != null)
+                uploadImage(bitmap)
         }
-    }
+
+    private val gallery =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { callback: Uri? ->
+            if (callback != null) {
+                val bitmap =
+                    MediaStore.Images.Media.getBitmap(requireContext().contentResolver, callback)
+                uploadImage(bitmap)
+            }
+        }
 
     private fun uploadImage(bitmap: Bitmap) {
-        binding?.loadedCatsUploadingProgressBar?.visibility = View.VISIBLE
-        binding?.loadedCatsContainer?.visibility = View.GONE
 
-        loadedCatsViewModel.compositeDisposable.add(loadedCatsViewModel.sendImageToServer(bitmap)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doFinally {
-                binding?.loadedCatsUploadingProgressBar?.visibility = View.GONE
-                binding?.loadedCatsContainer?.visibility = View.VISIBLE
+        loadedCatsViewModel.sendImageToServerStatus.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Loading -> {
+                    binding?.loadedCatsUploadingProgressBar?.visibility = View.VISIBLE
+                    binding?.loadedCatsContainer?.visibility = View.GONE
+                }
+                is Resource.Success -> {
+                    loadedCatsViewModel.refreshLoadedImages()
+                    binding?.loadedListRecyclerView?.findNavController()
+                        ?.navigate(R.id.action_loadedCatsFragment_self)
+                    Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_LONG).show()
+                }
+                is Resource.Error -> {
+                    Toast.makeText(context, "Error! Image not uploaded", Toast.LENGTH_LONG).show()
+                }
             }
-            .subscribe({
-                Log.d("RETROFIT", "Successful upload image to server -> " +
-                        "${it.message}, id: ${it.id}")
-                loadedCatsViewModel.refreshLoadedImages()
-                binding?.loadedListRecyclerView?.findNavController()?.navigate(R.id.action_loadedCatsFragment_self)
-                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_LONG).show()
-            }, {
-                Log.d("RETROFIT", "Exception during sendImage request -> ${it.localizedMessage}")
-                Toast.makeText(context, "Error! Image not uploaded", Toast.LENGTH_LONG).show()
-            })
-        )
+            binding?.loadedCatsUploadingProgressBar?.visibility = View.GONE
+            binding?.loadedCatsContainer?.visibility = View.VISIBLE
+        }
+        loadedCatsViewModel.sendImageToServer(bitmap)
     }
 
-    private val cameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        when {
-            granted -> camera.launch()
-            !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
-                binding?.loadedCatsContainer?.let {
-                    Snackbar
-                        .make(
-                            it,
-                            "You need to access camera permission to upload image",
-                            Snackbar.LENGTH_LONG
-                        )
-                        .setAction("Settings") {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri = Uri.fromParts("package", requireContext().packageName, null)
-                            intent.data = uri
-                            startActivity(intent)
-                        }
-                        .show()
+    private val cameraPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            when {
+                granted -> camera.launch()
+                !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
+                    binding?.loadedCatsContainer?.let {
+                        Snackbar
+                            .make(
+                                it,
+                                "You need to access camera permission to upload image",
+                                Snackbar.LENGTH_LONG
+                            )
+                            .setAction("Settings") {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                val uri =
+                                    Uri.fromParts("package", requireContext().packageName, null)
+                                intent.data = uri
+                                startActivity(intent)
+                            }
+                            .show()
+                    }
                 }
             }
         }
-    }
 
-    private val storagePermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        when {
-            granted -> gallery.launch("image/*")
-            !shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                binding?.loadedCatsContainer?.let {
-                    Snackbar
-                        .make(
-                            it,
-                            "You need to access storage permission to upload image",
-                            Snackbar.LENGTH_LONG
-                        )
-                        .setAction("Settings") {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri = Uri.fromParts("package", requireContext().packageName, null)
-                            intent.data = uri
-                            startActivity(intent)
-                        }
-                        .show()
+    private val storagePermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            when {
+                granted -> gallery.launch("image/*")
+                !shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+                    binding?.loadedCatsContainer?.let {
+                        Snackbar
+                            .make(
+                                it,
+                                "You need to access storage permission to upload image",
+                                Snackbar.LENGTH_LONG
+                            )
+                            .setAction("Settings") {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                val uri =
+                                    Uri.fromParts("package", requireContext().packageName, null)
+                                intent.data = uri
+                                startActivity(intent)
+                            }
+                            .show()
+                    }
                 }
             }
         }
-    }
 
     override fun onDialogGalleryClick(dialog: DialogFragment) {
         storagePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)

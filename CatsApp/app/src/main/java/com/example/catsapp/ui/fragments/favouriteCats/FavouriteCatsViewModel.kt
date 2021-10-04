@@ -1,6 +1,7 @@
 package com.example.catsapp.ui.fragments.favouriteCats
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.*
 import com.example.catsapp.api.models.req.FavouriteRequest
@@ -11,20 +12,24 @@ import com.example.catsapp.db.RoomCatsRepository
 import com.example.catsapp.db.dao.FavouriteIdsEntity
 import com.example.catsapp.di.appComponent
 import com.example.catsapp.ui.common.CatsAppKeys
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class FavouriteCatsViewModel(
     application: Application
-) : AndroidViewModel(application)  {
+) : AndroidViewModel(application) {
 
     init {
         application.appComponent.inject(this)
     }
+
     @Inject
     lateinit var catService: CatService
+
     @Inject
     lateinit var roomCatsRepository: RoomCatsRepository
 
@@ -33,6 +38,14 @@ class FavouriteCatsViewModel(
     private var _favourites = setupFavouritePager()
     var favourites: LiveData<PagingData<FavouriteResponse>> = _favourites
         private set
+
+    private val _insertAllFavouriteEntitiesToDBStatus = MutableLiveData<List<FavouriteResponse>>()
+    val insertAllFavouriteEntitiesToDBStatus: LiveData<List<FavouriteResponse>> =
+        _insertAllFavouriteEntitiesToDBStatus
+
+    private val _loadAllFavouriteEntitiesFromDBStatus = MutableLiveData<List<FavouriteIdsEntity>>()
+    val loadAllFavouriteEntitiesFromDBStatus: LiveData<List<FavouriteIdsEntity>> =
+        _loadAllFavouriteEntitiesFromDBStatus
 
     private val deletedFavourites = mutableSetOf<Int>()
     fun getDeletedFavourites() = deletedFavourites
@@ -76,7 +89,7 @@ class FavouriteCatsViewModel(
             .last(listOf())
     }
 
-    fun sendFavouriteToServer(image_id: String): Observable<BodyResponse> {
+    fun sendFavouriteToServerAndSaveToDB(image_id: String): Observable<BodyResponse> {
         return catService.sendFavouriteRequest(
             FavouriteRequest(
                 image_id = image_id,
@@ -94,7 +107,7 @@ class FavouriteCatsViewModel(
         }
     }
 
-    fun deleteFavouriteFromServer(favourite_id: String): Observable<BodyResponse> {
+    fun deleteFavouriteFromServerAndFromDB(favourite_id: String): Observable<BodyResponse> {
         return catService.deleteFavourite(favourite_id)
             .toObservable().flatMap {
                 catDatabaseList?.remove(catDatabaseList?.find { favouriteIdsEntity ->
@@ -119,8 +132,8 @@ class FavouriteCatsViewModel(
     }
 
     // Database
-    fun insertAllFavouriteEntitiesToDatabase(): Observable<List<FavouriteResponse>> {
-        return getAllFavouritesFromServer().toObservable().flatMap { list ->
+    fun insertAllFavouriteEntitiesToDB() {
+        compositeDisposable.add(getAllFavouritesFromServer().toObservable().flatMap { list ->
             val favouriteIdsEntityList = list.map {
                 FavouriteIdsEntity(
                     imageId = it.image_id!!,
@@ -131,13 +144,41 @@ class FavouriteCatsViewModel(
             roomCatsRepository.insertAll(favouriteIdsEntityList)
                 .andThen(Observable.just(list))
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _insertAllFavouriteEntitiesToDBStatus.value = it
+
+                Log.d("RETROFIT", "Successful insert favourites from server to database")
+            }, {
+                Log.d(
+                    "RETROFIT",
+                    "Exception during inserting favourites from server to database -> ${it.localizedMessage}"
+                )
+            })
+        )
     }
 
     fun setupFavouriteIdsEntityList(favouriteIdsEntityList: List<FavouriteIdsEntity>) {
         catDatabaseList = favouriteIdsEntityList as MutableList<FavouriteIdsEntity>
     }
 
-    fun loadAllFavouriteEntitiesFromDatabase() = roomCatsRepository.loadAllFavouriteEntities()
+    //    fun loadAllFavouriteEntitiesFromDatabase() = roomCatsRepository.loadAllFavouriteEntities()
+    fun loadAllFavouriteEntitiesFromDB() {
+        roomCatsRepository.loadAllFavouriteEntities()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _loadAllFavouriteEntitiesFromDBStatus.value = it
+
+                Log.d("RETROFIT", "Successful load favourites from database")
+            }, {
+                Log.d(
+                    "RETROFIT",
+                    "Exception during loading favourites from database -> ${it.localizedMessage}"
+                )
+            })
+    }
 
     fun getCatDatabaseList() = catDatabaseList
 

@@ -24,7 +24,7 @@ class RemoteModule {
     }
 
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit{
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://api.thecatapi.com/v1/")
             .addConverterFactory(GsonConverterFactory.create())

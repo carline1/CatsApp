@@ -1,4 +1,5 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources>
+
     <string name="app_name">Cats App</string>
     <string name="cats_images_fragment_title">Cats</string>
     <string name="favourites_cats_fragment_title">Favourite</string>

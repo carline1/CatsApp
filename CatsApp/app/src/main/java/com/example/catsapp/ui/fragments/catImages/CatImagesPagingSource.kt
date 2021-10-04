@@ -33,7 +33,7 @@ class CatImagesPagingSource(
             }.onErrorReturn { e ->
                 LoadResult.Error(e)
             }
-        }
+    }
 
     override fun getRefreshKey(state: PagingState<Int, CatImageResponse>): Int? {
         val anchorPosition = state.anchorPosition ?: return null

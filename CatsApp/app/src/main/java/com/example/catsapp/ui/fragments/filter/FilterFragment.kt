@@ -1,7 +1,6 @@
 package com.example.catsapp.ui.fragments.filter
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +15,6 @@ import com.example.catsapp.databinding.FragmentFilterBinding
 import com.example.catsapp.ui.common.CatsAppKeys
 import com.example.catsapp.ui.fragments.catImages.CatImagesViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.schedulers.Schedulers
 
 
 class FilterFragment : BottomSheetDialogFragment() {
@@ -44,23 +41,20 @@ class FilterFragment : BottomSheetDialogFragment() {
             setupSpinners(view, filterViewModel.breedList, filterViewModel.categoryList)
         } else {
             @Suppress("UNCHECKED_CAST")
-            filterViewModel.compositeDisposable.add(filterViewModel.getBreedsAndCategoriesFromServer()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    val noneBreedFilterResponse = BreedFilterResponse("", "None")
-                    val noneCategoryFilterResponse = CategoryFilterResponse(-1, "None")
+            filterViewModel.getBreedsAndCategoriesFromServerStatus.observe(viewLifecycleOwner) {
+                val noneBreedFilterResponse = BreedFilterResponse("", "None")
+                val noneCategoryFilterResponse = CategoryFilterResponse(-1, "None")
 
-                    val breadList = listOf(noneBreedFilterResponse) + (it[CatsAppKeys.BREED_LIST_KEY] as List<BreedFilterResponse>)
-                    val categoryList = listOf(noneCategoryFilterResponse) + (it[CatsAppKeys.CATEGORY_LIST_KEY] as List<CategoryFilterResponse>)
-                    filterViewModel.setupBreedList(breadList)
-                    filterViewModel.setupCategoryList(categoryList)
+                val breadList =
+                    listOf(noneBreedFilterResponse) + (it[CatsAppKeys.BREED_LIST_KEY] as List<BreedFilterResponse>)
+                val categoryList =
+                    listOf(noneCategoryFilterResponse) + (it[CatsAppKeys.CATEGORY_LIST_KEY] as List<CategoryFilterResponse>)
+                filterViewModel.setupBreedList(breadList)
+                filterViewModel.setupCategoryList(categoryList)
 
-                    setupSpinners(view, filterViewModel.breedList, filterViewModel.categoryList)
-                }, {
-                    Log.d("RETROFIT", "Exception during breedAndCategory request -> ${it.localizedMessage}")
-                })
-            )
+                setupSpinners(view, filterViewModel.breedList, filterViewModel.categoryList)
+            }
+            filterViewModel.getBreedsAndCategoriesFromServer()
         }
 
         binding?.applyFilterBtn?.setOnClickListener {
@@ -68,12 +62,22 @@ class FilterFragment : BottomSheetDialogFragment() {
                 "order" to binding?.spinnerOrder?.selectedItem.toString(),
                 "mime_types" to convertTypeName(binding?.spinnerType?.selectedItem.toString())
             )
-            if ((binding?.spinnerBreed?.selectedItem as BreedFilterResponse).name !in listOf("None", "Error") &&
-                (binding?.spinnerBreed?.selectedItem as BreedFilterResponse).id != null)
-                requestParams["breed_id"] = (binding?.spinnerBreed?.selectedItem as BreedFilterResponse).id.toString()
-            if ((binding?.spinnerCategory?.selectedItem as CategoryFilterResponse).name !in listOf("None", "Error") &&
-                (binding?.spinnerCategory?.selectedItem as CategoryFilterResponse).id != null)
-                requestParams["category_ids"] = (binding?.spinnerCategory?.selectedItem as CategoryFilterResponse).id.toString()
+            if ((binding?.spinnerBreed?.selectedItem as BreedFilterResponse).name !in listOf(
+                    "None",
+                    "Error"
+                ) &&
+                (binding?.spinnerBreed?.selectedItem as BreedFilterResponse).id != null
+            )
+                requestParams["breed_id"] =
+                    (binding?.spinnerBreed?.selectedItem as BreedFilterResponse).id.toString()
+            if ((binding?.spinnerCategory?.selectedItem as CategoryFilterResponse).name !in listOf(
+                    "None",
+                    "Error"
+                ) &&
+                (binding?.spinnerCategory?.selectedItem as CategoryFilterResponse).id != null
+            )
+                requestParams["category_ids"] =
+                    (binding?.spinnerCategory?.selectedItem as CategoryFilterResponse).id.toString()
 
             catImagesViewModel.setRequestParams(requestParams)
             catImagesViewModel.refreshCatImages()
@@ -89,7 +93,7 @@ class FilterFragment : BottomSheetDialogFragment() {
     }
 
     private fun convertTypeName(typeName: String): String {
-        return when(typeName) {
+        return when (typeName) {
             "All" -> "gif,jpg,png"
             "Static" -> "jpg,png"
             "Animated" -> "gif"
@@ -97,7 +101,11 @@ class FilterFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun setupSpinners(view: View, breedList: List<BreedFilterResponse>, categoryList: List<CategoryFilterResponse>) {
+    private fun setupSpinners(
+        view: View,
+        breedList: List<BreedFilterResponse>,
+        categoryList: List<CategoryFilterResponse>
+    ) {
         // Setup spinners
         val adapterOrderSpinner: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(
             view.context,
@@ -115,19 +123,21 @@ class FilterFragment : BottomSheetDialogFragment() {
         adapterTypeSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding?.spinnerType?.adapter = adapterTypeSpinner
 
-        val adapterBreedSpinner: ArrayAdapter<BreedFilterResponse> = ArrayAdapter<BreedFilterResponse>(
-            view.context,
-            android.R.layout.simple_spinner_item,
-            breedList
-        )
+        val adapterBreedSpinner: ArrayAdapter<BreedFilterResponse> =
+            ArrayAdapter<BreedFilterResponse>(
+                view.context,
+                android.R.layout.simple_spinner_item,
+                breedList
+            )
         adapterBreedSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding?.spinnerBreed?.adapter = adapterBreedSpinner
 
-        val adapterCategoryFilterSpinner: ArrayAdapter<CategoryFilterResponse> = ArrayAdapter<CategoryFilterResponse>(
-            view.context,
-            android.R.layout.simple_spinner_item,
-            categoryList
-        )
+        val adapterCategoryFilterSpinner: ArrayAdapter<CategoryFilterResponse> =
+            ArrayAdapter<CategoryFilterResponse>(
+                view.context,
+                android.R.layout.simple_spinner_item,
+                categoryList
+            )
         adapterCategoryFilterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding?.spinnerCategory?.adapter = adapterCategoryFilterSpinner
 

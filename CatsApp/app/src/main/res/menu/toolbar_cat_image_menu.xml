@@ -5,5 +5,5 @@
         android:id="@+id/filter_item_menu"
         android:icon="@drawable/ic_filter_alt"
         android:title="@string/filter_title_menu"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

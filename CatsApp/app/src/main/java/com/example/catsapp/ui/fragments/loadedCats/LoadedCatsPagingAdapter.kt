@@ -36,8 +36,10 @@ class LoadedCatsPagingAdapter(
             .build()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        return ImageViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.image_view_holder, parent, false), loadedCtasViewModel)
+        return ImageViewHolder(
+            LayoutInflater.from(parent.context)
+                .inflate(R.layout.image_view_holder, parent, false), loadedCtasViewModel
+        )
     }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
@@ -62,40 +64,57 @@ class LoadedCatsPagingAdapter(
             itemView.setOnClickListener {
                 it.startAnimation(AlphaAnimation(10f, 0.8f))
 
-                val action = LoadedCatsFragmentDirections.actionLoadedCatsFragmentToCatAnalysisCardFragment(
-                    item?.url,
-                    item?.id
-                )
+                val action =
+                    LoadedCatsFragmentDirections.actionLoadedCatsFragmentToCatAnalysisCardFragment(
+                        item?.url,
+                        item?.id
+                    )
                 it.findNavController().navigate(action)
             }
 
-            itemView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+            itemView.setOnCreateContextMenuListener { menu, v, _ ->
                 menu?.add(0, v?.id!!, 0, "Delete")
                     ?.setOnMenuItemClickListener {
-                        loadedCtasViewModel.compositeDisposable.add(loadedCtasViewModel.deleteLoadedImageFromServer(item?.id!!)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe({
-                                Log.d("RETROFIT", "Successful image deleting from uploaded-> ${it.message}")
-                                loadedCtasViewModel.deleteLoadedImageFromLiveData(item)
-                                notifyItemRangeChanged(position, itemCount - position)
-                            }, {
-                                Log.d("RETROFIT", "Exception during deleteUploadedImage request -> ${it.localizedMessage}")
-                                loadedCtasViewModel.deleteLoadedImageFromLiveData(item)
-                                notifyItemRangeChanged(position, itemCount - position)
-                            }))
+                        loadedCtasViewModel.compositeDisposable.add(
+                            loadedCtasViewModel.deleteLoadedImageFromServer(
+                                item?.id!!
+                            )
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({
+                                    Log.d(
+                                        "RETROFIT",
+                                        "Successful image deleting from uploaded-> ${it.message}"
+                                    )
+                                    loadedCtasViewModel.deleteLoadedImageFromLiveData(item)
+                                    notifyItemRangeChanged(position, itemCount - position)
+                                }, {
+                                    Log.d(
+                                        "RETROFIT",
+                                        "Exception during deleteUploadedImage request -> ${it.localizedMessage}"
+                                    )
+                                    loadedCtasViewModel.deleteLoadedImageFromLiveData(item)
+                                    notifyItemRangeChanged(position, itemCount - position)
+                                })
+                        )
                         true
                     }
             }
         }
     }
 
-    companion object DiffCallback: DiffUtil.ItemCallback<CatImageResponse>() {
-        override fun areItemsTheSame(oldItem: CatImageResponse, newItem: CatImageResponse): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<CatImageResponse>() {
+        override fun areItemsTheSame(
+            oldItem: CatImageResponse,
+            newItem: CatImageResponse
+        ): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: CatImageResponse, newItem: CatImageResponse): Boolean {
+        override fun areContentsTheSame(
+            oldItem: CatImageResponse,
+            newItem: CatImageResponse
+        ): Boolean {
             return oldItem == newItem
         }
     }

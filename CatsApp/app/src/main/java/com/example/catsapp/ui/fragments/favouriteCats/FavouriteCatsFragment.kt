@@ -41,9 +41,9 @@ class FavouriteCatsFragment : Fragment() {
         recyclerView.adapter = pagingAdapter
         val layoutManager = GridLayoutManager(view.context, 2)
         recyclerView.layoutManager = layoutManager
-        layoutManager.spanSizeLookup =  object : GridLayoutManager.SpanSizeLookup() {
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return if (position == pagingAdapter.itemCount  && pagingAdapter.itemCount > 0) {
+                return if (position == pagingAdapter.itemCount && pagingAdapter.itemCount > 0) {
                     2
                 } else {
                     1
@@ -69,8 +69,8 @@ class FavouriteCatsFragment : Fragment() {
                 pagingData.filter { it.id !in favouritesViewModel.getDeletedFavourites() }
             }
                 .observe(viewLifecycleOwner, {
-                pagingAdapter.submitData(lifecycle, it)
-            })
+                    pagingAdapter.submitData(lifecycle, it)
+                })
         }
     }
 }

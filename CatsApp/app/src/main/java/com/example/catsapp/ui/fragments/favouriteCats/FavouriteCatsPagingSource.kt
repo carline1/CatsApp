@@ -15,7 +15,8 @@ class FavouriteCatsPagingSource(
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, FavouriteResponse>> {
         val page = params.key ?: 0
         val limit = params.loadSize
-        val response = catService.getFavourites(CatsAppKeys.SUB_ID, limit.toString(), page.toString())
+        val response =
+            catService.getFavourites(CatsAppKeys.SUB_ID, limit.toString(), page.toString())
 
         return response
             .subscribeOn(Schedulers.io())

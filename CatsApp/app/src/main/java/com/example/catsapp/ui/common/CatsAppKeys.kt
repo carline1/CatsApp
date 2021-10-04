@@ -8,4 +8,8 @@ object CatsAppKeys {
     const val SUB_ID = "user162746871621874621874681"
     const val PAGE_SIZE = 16
     const val INITIAL_LOAD_SIZE = 16
+
+    const val LOADING = 0
+    const val SUCCESS = 1
+    const val ERROR = 2
 }

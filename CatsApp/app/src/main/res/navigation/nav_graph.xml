@@ -10,7 +10,7 @@
         android:id="@+id/catImagesFragment"
         android:name="com.example.catsapp.ui.fragments.catImages.CatImagesFragment"
         android:label="fragment_cat_images"
-        tools:layout="@layout/fragment_cat_images" >
+        tools:layout="@layout/fragment_cat_images">
         <action
             android:id="@+id/action_catImagesFragment_to_cardCatFragment"
             app:destination="@id/cardCatFragment" />
@@ -22,7 +22,7 @@
         android:id="@+id/loadedCatsFragment"
         android:name="com.example.catsapp.ui.fragments.loadedCats.LoadedCatsFragment"
         android:label="fragment_loaded_cats"
-        tools:layout="@layout/fragment_loaded_cats" >
+        tools:layout="@layout/fragment_loaded_cats">
         <action
             android:id="@+id/action_loadedCatsFragment_to_imagePickerDialogFragment"
             app:destination="@id/imagePickerDialogFragment" />
@@ -37,7 +37,7 @@
         android:id="@+id/favouriteCatsFragment"
         android:name="com.example.catsapp.ui.fragments.favouriteCats.FavouriteCatsFragment"
         android:label="fragment_favourites_cats"
-        tools:layout="@layout/fragment_favourite_cats" >
+        tools:layout="@layout/fragment_favourite_cats">
         <action
             android:id="@+id/action_favouriteCatsFragment_to_cardCatFragment"
             app:destination="@id/cardCatFragment" />
@@ -46,7 +46,7 @@
         android:id="@+id/cardCatFragment"
         android:name="com.example.catsapp.ui.fragments.catCard.CatCardFragment"
         android:label="fragment_card_cat"
-        tools:layout="@layout/fragment_cat_card" >
+        tools:layout="@layout/fragment_cat_card">
         <argument
             android:name="imageId"
             app:argType="string"
@@ -60,7 +60,7 @@
         android:id="@+id/filterFragment"
         android:name="com.example.catsapp.ui.fragments.filter.FilterFragment"
         android:label="fragment_filter"
-        tools:layout="@layout/fragment_filter" >
+        tools:layout="@layout/fragment_filter">
         <action
             android:id="@+id/action_filterFragment_to_catImagesFragment"
             app:destination="@id/catImagesFragment" />

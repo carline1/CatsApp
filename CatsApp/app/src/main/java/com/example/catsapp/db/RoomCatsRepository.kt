@@ -7,9 +7,15 @@ import io.reactivex.rxjava3.core.Single
 
 class RoomCatsRepository(private val catsDao: CatsDao) {
 
-    fun loadAllFavouriteEntities(): Single<List<FavouriteIdsEntity>> = catsDao.loadAllFavouriteEntities()
-    fun insertAll(favouriteIdsEntityList: List<FavouriteIdsEntity>) = catsDao.insertAll(favouriteIdsEntityList)
-    fun insertFavourite(favouriteIdsEntity: FavouriteIdsEntity): Completable = catsDao.insertFavourite(favouriteIdsEntity)
+    fun loadAllFavouriteEntities(): Single<List<FavouriteIdsEntity>> =
+        catsDao.loadAllFavouriteEntities()
+
+    fun insertAll(favouriteIdsEntityList: List<FavouriteIdsEntity>) =
+        catsDao.insertAll(favouriteIdsEntityList)
+
+    fun insertFavourite(favouriteIdsEntity: FavouriteIdsEntity): Completable =
+        catsDao.insertFavourite(favouriteIdsEntity)
+
     fun deleteFavourite(favouriteId: String): Completable = catsDao.deleteFavourite(favouriteId)
 
 }

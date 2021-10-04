@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingBottom="10dp">
 
@@ -15,11 +15,11 @@
             android:id="@+id/analysis_vh_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?android:attr/textColor"
-            android:textSize="18sp"
             android:layout_marginEnd="10dp"
             android:text="@string/colon"
-            tools:text="Cat:"/>
+            android:textColor="?android:attr/textColor"
+            android:textSize="18sp"
+            tools:text="Cat:" />
 
         <TextView
             android:id="@+id/analysis_vh_confidence"
@@ -27,16 +27,16 @@
             android:layout_height="wrap_content"
             android:textColor="?android:attr/textColor"
             android:textSize="18sp"
-            tools:text="94.1232"/>
+            tools:text="94.1232" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/analysis_vh_parents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
         android:text="@string/analysis_vh_parents"
         android:textColor="?android:attr/textColorSecondary"
-        android:textStyle="italic"/>
+        android:textSize="18sp"
+        android:textStyle="italic" />
 
 </LinearLayout>

@@ -2,16 +2,21 @@ package com.example.catsapp.ui.fragments.filter
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.catsapp.api.models.res.BreedFilterResponse
 import com.example.catsapp.api.models.res.CategoryFilterResponse
 import com.example.catsapp.api.services.CatService
 import com.example.catsapp.di.appComponent
 import com.example.catsapp.ui.common.CatsAppKeys
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class FilterViewModel(
@@ -21,10 +26,11 @@ class FilterViewModel(
     init {
         application.appComponent.inject(this)
     }
+
     @Inject
     lateinit var catService: CatService
 
-    val compositeDisposable = CompositeDisposable()
+    private val compositeDisposable = CompositeDisposable()
 
     var bundleFilterFragment = bundleOf()
         private set
@@ -33,6 +39,10 @@ class FilterViewModel(
         private set
     var categoryList = listOf<CategoryFilterResponse>()
         private set
+
+    private val _getBreedsAndCategoriesFromServerStatus = MutableLiveData<Map<String, List<Any>>>()
+    val getBreedsAndCategoriesFromServerStatus: LiveData<Map<String, List<Any>>> =
+        _getBreedsAndCategoriesFromServerStatus
 
     // Setup filter
     fun setupBundleFilter(bundle: Bundle) {
@@ -86,12 +96,27 @@ class FilterViewModel(
             .last(listOf())
     }
 
-    fun getBreedsAndCategoriesFromServer(): Single<Map<String, List<Any>>> {
-        return Single.zip(
+    fun getBreedsAndCategoriesFromServer() {
+        compositeDisposable.add(Single.zip(
             getBreedsFromServer(),
             getCategoriesFromServer(),
             { breed: List<BreedFilterResponse>, categoryFilter: List<CategoryFilterResponse> ->
-                mapOf(CatsAppKeys.BREED_LIST_KEY to breed, CatsAppKeys.CATEGORY_LIST_KEY to categoryFilter)}
+                mapOf(
+                    CatsAppKeys.BREED_LIST_KEY to breed,
+                    CatsAppKeys.CATEGORY_LIST_KEY to categoryFilter
+                )
+            }
+        )
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                _getBreedsAndCategoriesFromServerStatus.value = it
+            }, {
+                Log.d(
+                    "RETROFIT",
+                    "Exception during breedAndCategory request -> ${it.localizedMessage}"
+                )
+            })
         )
     }
 

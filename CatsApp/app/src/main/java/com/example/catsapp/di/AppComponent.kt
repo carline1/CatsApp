@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Component(modules = [RemoteModule::class, RoomModule::class])
 @Singleton
-interface AppComponent  {
+interface AppComponent {
     fun inject(viewModel: CatImagesViewModel)
     fun inject(viewModel: FavouriteCatsViewModel)
     fun inject(viewModel: LoadedCatsViewModel)

@@ -23,16 +23,18 @@ class LabelsAnalysisAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LabelViewHolder {
         return LabelViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.analysis_view_holder, parent, false))
+                .inflate(R.layout.analysis_view_holder, parent, false)
+        )
     }
 
     override fun onBindViewHolder(holder: LabelViewHolder, position: Int) {
         return holder.bind(getItem(position))
     }
 
-    class LabelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+    class LabelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val analysisVhName = itemView.findViewById<TextView>(R.id.analysis_vh_name)
-        private val analysisVhConfidence = itemView.findViewById<TextView>(R.id.analysis_vh_confidence)
+        private val analysisVhConfidence =
+            itemView.findViewById<TextView>(R.id.analysis_vh_confidence)
         private val analysisVhParents = itemView.findViewById<TextView>(R.id.analysis_vh_parents)
 
         fun bind(item: ImageAnalysisResponseLabel?) {
@@ -49,9 +51,9 @@ class LabelsAnalysisAdapter(
                     parents += it.name + ", "
                 }
                 parents = parents.substring(0, parents.length - 2)
-                analysisVhParents.text = itemView.resources.getString(R.string.analysis_vh_parents, parents)
-            }
-            else {
+                analysisVhParents.text =
+                    itemView.resources.getString(R.string.analysis_vh_parents, parents)
+            } else {
                 analysisVhParents.visibility = View.GONE
             }
         }

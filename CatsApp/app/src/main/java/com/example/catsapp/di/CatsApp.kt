@@ -17,7 +17,7 @@ class CatsApp : Application() {
 }
 
 val Context.appComponent: AppComponent
-    get() = when(this) {
+    get() = when (this) {
         is CatsApp -> appComponent
         else -> this.applicationContext.appComponent
     }

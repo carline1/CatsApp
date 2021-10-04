@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -11,25 +10,25 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         android:background="@android:color/transparent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="?attr/colorPrimary"
             android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
-                android:id="@+id/cardImage"
+                android:id="@+id/catCardImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 app:layout_collapseMode="parallax"
-                tools:src="@drawable/image_placeholder"
-                tools:ignore="ContentDescription" />
+                tools:ignore="ContentDescription"
+                tools:src="@drawable/image_placeholder" />
 
             <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
@@ -52,28 +51,33 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/cat_card_progress_bar"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="com.example.catsapp.ui.common.AdaptiveHeightScrollingViewBehavior"
+        android:layout_height="match_parent"
         tools:visibility="gone">
 
         <ProgressBar
+            android:id="@+id/cat_card_progress_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/cat_card_retry_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/retry_btn" />
+
+    </FrameLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/catCardInfo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:visibility="gone"
-        tools:visibility="visible">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/breedLayout"
@@ -81,8 +85,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:paddingTop="15dp">
+            android:paddingTop="15dp"
+            android:paddingEnd="15dp">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -101,16 +105,16 @@
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/green"
                         android:text="@string/love_vote"
-                        android:textColor="?android:attr/textColor"/>
+                        android:textColor="?android:attr/textColor" />
 
                     <Button
                         android:id="@+id/nopeVoteBtn"
                         android:layout_width="140dp"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/red"
                         android:layout_gravity="end"
+                        android:backgroundTint="@color/red"
                         android:text="@string/nope_vote"
-                        android:textColor="?android:attr/textColor"/>
+                        android:textColor="?android:attr/textColor" />
 
                 </FrameLayout>
 
@@ -118,12 +122,12 @@
                     android:id="@+id/already_voted_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/voted_message"
-                    android:textSize="20sp"
-                    android:textColor="@color/green"
-                    android:gravity="center"
                     android:layout_gravity="center"
-                    android:visibility="gone"/>
+                    android:gravity="center"
+                    android:text="@string/voted_message"
+                    android:textColor="@color/green"
+                    android:textSize="20sp"
+                    android:visibility="gone" />
 
             </FrameLayout>
 
@@ -131,12 +135,12 @@
                 android:id="@+id/cardImageName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="22sp"
-                android:textColor="?android:attr/textColor"
-                android:textStyle="bold"
-                android:text="@string/cat_card_info_not_found"
                 android:layout_marginBottom="10dp"
-                tools:text="@tools:sample/first_names"/>
+                android:text="@string/cat_card_info_not_found"
+                android:textColor="?android:attr/textColor"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="@tools:sample/first_names" />
 
             <LinearLayout
                 android:id="@+id/cardImageBreedInfo"
@@ -150,18 +154,18 @@
                     android:id="@+id/cardImageDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="?android:attr/textColor"
                     android:layout_marginBottom="10dp"
+                    android:textColor="?android:attr/textColor"
+                    android:textSize="18sp"
                     tools:text="@tools:sample/lorem" />
 
                 <TextView
                     android:id="@+id/cardImageTemperament"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textColor="?android:attr/textColor"
                     android:layout_marginBottom="20dp"
+                    android:textColor="?android:attr/textColor"
+                    android:textSize="18sp"
                     android:textStyle="italic"
                     tools:text="@tools:sample/lorem" />
 
@@ -174,10 +178,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/affection_level_title_cat_card"
-                        android:textColor="?android:attr/textColor"/>
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -189,11 +193,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -209,10 +213,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/adaptability_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -224,11 +228,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -244,10 +248,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/child_friendly_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -259,11 +263,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -280,10 +284,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/dog_friendly_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -295,11 +299,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -315,10 +319,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/energy_level_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -330,11 +334,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -350,10 +354,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/grooming_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -365,11 +369,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -385,10 +389,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/health_issues_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -400,11 +404,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -420,10 +424,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/intelligence_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -435,11 +439,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -455,10 +459,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/shedding_level_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -470,11 +474,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -490,27 +494,27 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/social_needs_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="end">
 
-                            <RatingBar
-                                android:id="@+id/cardImageSocialNeedsRatingBar"
-                                style="?android:attr/ratingBarStyleIndicator"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:scaleX="0.7"
-                                android:scaleY="0.7"
-                                android:transformPivotX="0dp"
-                                android:transformPivotY="20dp"
-                                android:numStars="5"
-                                tools:rating="3.5" />
+                        <RatingBar
+                            android:id="@+id/cardImageSocialNeedsRatingBar"
+                            style="?android:attr/ratingBarStyleIndicator"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="5"
+                            android:scaleX="0.7"
+                            android:scaleY="0.7"
+                            android:transformPivotX="0dp"
+                            android:transformPivotY="20dp"
+                            tools:rating="3.5" />
 
                     </FrameLayout>
 
@@ -524,10 +528,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/stranger_friendly_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
 
                     <FrameLayout
@@ -541,11 +545,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>
@@ -561,10 +565,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
                         android:layout_gravity="center_vertical"
                         android:text="@string/vocalisation_title_cat_card"
-                        android:textColor="?android:attr/textColor" />
+                        android:textColor="?android:attr/textColor"
+                        android:textSize="18sp" />
 
                     <FrameLayout
                         android:layout_width="180dp"
@@ -576,11 +580,11 @@
                             style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:numStars="5"
                             android:scaleX="0.7"
                             android:scaleY="0.7"
                             android:transformPivotX="0dp"
                             android:transformPivotY="20dp"
-                            android:numStars="5"
                             tools:rating="3.5" />
 
                     </FrameLayout>

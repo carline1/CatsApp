@@ -11,11 +11,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 object FullScreenStateChanger {
     fun fullScreen(activity: Activity, state: Boolean) {
-        val navHostFragment = (activity as AppCompatActivity).findViewById<FragmentContainerView>(R.id.nav_host_fragment)
+        val navHostFragment =
+            (activity as AppCompatActivity).findViewById<FragmentContainerView>(R.id.nav_host_fragment)
         val marginLayoutParams = navHostFragment.layoutParams as ViewGroup.MarginLayoutParams
         val marginBottom: Int
         val visibility: Int
-        when(state) {
+        when (state) {
             true -> {
                 marginBottom = 0
                 visibility = View.GONE
@@ -28,14 +29,16 @@ object FullScreenStateChanger {
                     typeValue,
                     true
                 )
-                marginBottom = activity.applicationContext.resources.getDimensionPixelSize(typeValue.resourceId)
+                marginBottom =
+                    activity.applicationContext.resources.getDimensionPixelSize(typeValue.resourceId)
                 visibility = View.VISIBLE
                 activity.supportActionBar?.show()
             }
         }
         marginLayoutParams.setMargins(0, 0, 0, marginBottom)
         navHostFragment.requestLayout()
-        val bottomNavView = (activity).findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
+        val bottomNavView =
+            (activity).findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
         bottomNavView.visibility = visibility
     }
 }

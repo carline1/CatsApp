@@ -48,7 +48,10 @@ interface CatService {
 
     @POST("images/upload")
     @Multipart
-    fun sendImageRequest(@Part body: MultipartBody.Part, @Part("sub_id") sub_id: RequestBody): Single<BodyResponse>
+    fun sendImageRequest(
+        @Part body: MultipartBody.Part,
+        @Part("sub_id") sub_id: RequestBody
+    ): Single<BodyResponse>
 
     @GET("images")
     fun getUploadImages(@QueryMap parameters: Map<String, String>): Single<List<CatImageResponse>>
